@@ -1,5 +1,5 @@
 distributing:
   - title: 分布式一致性深度解析
     url: /docs/分布式一致性深度解析/
-  - title: 分布式分段式一致性解决方案
-    url: /docs/分布式分段式一致性解决方案/
+  - title: 分布式隔离性深度解析
+    url: /docs/分布式隔离性深度解析/
