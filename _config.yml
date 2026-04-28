@@ -1,8 +1,16 @@
 title: BuzzCrow's Docs
 description: Technical documentation and notes on distributed systems, databases, and more.
+
+# 主题设置
 theme: just-the-docs
 
-url: https://buzzcrow.github.io
+# GitHub Pages 设置
+url: "https://buzzcrow.github.io"
+baseurl: "/buzzcrow.github.io"  # 如果是项目站点，这行很重要
 
+# 导航栏右侧的辅助链接
 aux_links:
-  GitHub: https://github.com/buzzcrow/buzzcrow.github.io
+  GitHub: https://github.com/buzzcrow
+
+# 可选：启用全文本搜索（Just the Docs 功能）
+search_enabled: true
