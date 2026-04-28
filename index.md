@@ -9,4 +9,5 @@ Welcome to my technical documentation site. Here you'll find in-depth articles o
 
 ### Distributed Systems
 
-- [分布式一致性深度解析：理论演进、模型光谱与工程权衡](/docs/分布式一致性深度解析/)
+- [分布式一致性深度解析](docs/分布式一致性深度解析.md)
+- [分布式隔离性深度解析](docs/分布式隔离性深度解析.md)
