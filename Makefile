@@ -2,7 +2,7 @@
 # 用法: make [target]
 
 # 变量定义
-JEKYLL := bundle exec jekyll
+JEKYLL := RUBYOPT="-W0" bundle exec jekyll
 SITE_DIR := _site
 PORT := 4000
 HOST := localhost

@@ -2,9 +2,7 @@
 title: 多版本并发控制 (MVCC)
 layout: page
 nav_order: 3
-description: 从理论到工程实现，涵盖 InnoDB、PostgreSQL、NewSQL 等多种 MVCC 实现机制。
 date: 2026-04-29
-tags: [Database, MVCC, InnoDB, PostgreSQL, Distributed System]
 ---
 
 # 多版本并发控制 (MVCC)：从理论到工程实现
