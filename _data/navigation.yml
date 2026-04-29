@@ -1,5 +1,7 @@
-distributing:
-  - title: 分布式一致性深度解析
-    url: /docs/分布式一致性深度解析/
-  - title: 分布式隔离性深度解析
-    url: /docs/分布式隔离性深度解析/
+深度解析系列:
+  - title: 分布式一致性
+    url: /docs/分布式一致性/
+  - title: 分布式隔离性
+    url: /docs/分布式隔离性/
+  - title: 多版本并发控制 (MVCC)
+    url: /docs/MVCC/

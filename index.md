@@ -1,13 +1,24 @@
 ---
-title: Home
+title: 首页
 layout: home
 ---
 
-Welcome to my technical documentation site. Here you'll find in-depth articles on distributed systems, databases, and software engineering topics.
+欢迎访问我的技术文档站点。这里收录了关于分布式系统、存储系统和软件工程的文章。
 
-## Documentation
+## 文档目录
 
-### Distributed Systems
+### 深度解析系列
 
-- [分布式一致性深度解析](docs/分布式一致性深度解析.md)
-- [分布式隔离性深度解析](docs/分布式隔离性深度解析.md)
+- [分布式一致性](/docs/分布式一致性/) - 理论演进、模型光谱与工程权衡
+- [分布式隔离性](/docs/分布式隔离性/) - 从 ACID 到分布式事务的并发边界  
+- [多版本并发控制 (MVCC)](/docs/MVCC/) - 从理论到工程实现
+
+## 关于
+
+本站使用 Jekyll + Just the Docs 主题构建，文档内容基于实际工程经验与理论学习整理而成。
+
+## 最近更新
+
+- 2026-04-29: 新增 MVCC 深度解析文档
+- 2026-04-28: 分布式隔离性深度解析
+- 2026-04-27: 分布式一致性深度解析
