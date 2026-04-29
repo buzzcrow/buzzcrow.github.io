@@ -5,3 +5,5 @@
     url: /docs/分布式隔离性/
   - title: 多版本并发控制 (MVCC)
     url: /docs/MVCC/
+  - title: Paxos 分布式共识全指南
+    url: /docs/Paxos/

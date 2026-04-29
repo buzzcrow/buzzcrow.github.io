@@ -7,9 +7,12 @@ date: 2026-04-29
 
 # 多版本并发控制 (MVCC)：从理论到工程实现
 
-> 本文档系统性地介绍 MVCC（Multi-Version Concurrency Control）的设计哲学、核心接口抽象，以及 InnoDB、PostgreSQL、CockroachDB 等不同数据库引擎中的具体实现细节，涵盖 Undo Log、Heap Page、Sequence Number、全局时间戳等关键技术。
+> 本文档系统性地介绍 MVCC（Multi-Version Concurrency
+> Control）的设计哲学、核心接口抽象，以及 InnoDB、PostgreSQL、CockroachDB 等不同数据库引擎中的具体实现细节，涵盖 Undo
+> Log、Heap Page、Sequence Number、全局时间戳等关键技术。
 
 ## 目录
+
 1. [MVCC 定义与核心目标](#mvcc-定义与核心目标)
 2. [抽象接口设计 (Interface Design)](#抽象接口设计-interface-design)
 3. [实现方式一：基于 Undo Log (InnoDB 模式)](#实现方式一基于-undo-log-innodb-模式)
@@ -26,10 +29,13 @@ date: 2026-04-29
 ## MVCC 定义与核心目标
 
 ### 定义
+
 **多版本并发控制 (MVCC)** 是一种数据库并发控制协议，其核心思想是：
+
 > **为数据库中的每一条数据维护多个历史版本，使得读操作可以访问旧版本数据，而写操作创建新版本，从而实现“读写互不阻塞”。**
 
 ### 核心目标
+
 1.  **读写分离**：读不阻塞写，写不阻塞读。
 2.  **一致性读 (Consistent Read)**：事务启动时看到的是一个一致性的数据快照。
 3.  **高并发**：相比传统的两阶段锁 (2PL)，显著提升系统吞吐量。
@@ -38,7 +44,8 @@ date: 2026-04-29
 
 ## 抽象接口设计 (Interface Design)
 
-为了屏蔽底层实现的差异（Undo Log 还是 Heap Page），所有 MVCC 系统对外暴露的逻辑通常遵循一套相似的接口。
+为了屏蔽底层实现的差异（Undo Log 还是 Heap
+Page），所有 MVCC 系统对外暴露的逻辑通常遵循一套相似的接口。
 
 ```
 java
@@ -88,6 +95,7 @@ void rollback(long txId);
 这是最经典的 MVCC 实现，以 **MySQL InnoDB** 为代表。
 
 ### 核心组件
+
 1.  **B+Tree 聚簇索引**：存储数据的**最新版本**。
 2.  **Undo Log (回滚段)**：存储数据的**历史版本**。
 3.  **Roll Pointer (回滚指针)**：存在于 B+Tree 的叶子节点中，指向 Undo Log。
@@ -110,6 +118,7 @@ UndoLog* prev_log; // 指向上一个 Undo Log 的指针 (形成链表)
 ```
 
 ### 工作流程
+
 1.  **UPDATE**：
     - 将当前行复制到 Undo Log 中（旧版本）。
     - 修改 B+Tree 中的数据（新版本）。
@@ -117,7 +126,8 @@ UndoLog* prev_log; // 指向上一个 Undo Log 的指针 (形成链表)
 2.  **SELECT (快照读)**：
     - 从 B+Tree 取到最新行。
     - 根据 `ReadView` 判断最新行是否可见。
-    - 若不可见（如未提交），顺着 `roll_ptr` 遍历 Undo Log 链表，直到找到第一个可见的版本。
+    - 若不可见（如未提交），顺着 `roll_ptr` 遍历 Undo
+      Log 链表，直到找到第一个可见的版本。
 
 ---
 
@@ -126,6 +136,7 @@ UndoLog* prev_log; // 指向上一个 Undo Log 的指针 (形成链表)
 **PostgreSQL** 采用了另一种思路：直接将多版本数据（Tuple）存储在 Heap 表中。
 
 ### 核心组件
+
 1.  **Heap Table**：无序的堆表，存放所有版本的 Tuple。
 2.  **Tuple Header**：每个数据行头部包含版本信息 (`xmin`, `xmax`)。
 3.  **Index (B-Tree)**：索引指向 Heap 中的行指针 (CTID)。
@@ -149,6 +160,7 @@ return false;
 ```
 
 ### 特点
+
 - **优势**：索引结构简单，更新速度快（只需插入新 Tuple，更新索引指针）。
 - **劣势**：会产生大量垃圾版本（Dead Tuples），需要 `VACUUM` 进程定期清理。
 
@@ -156,11 +168,13 @@ return false;
 
 ## 实现方式三：基于时间戳排序 (NewSQL 模式)
 
-在分布式系统中，无法使用单机的内存指针（Undo Log），因此采用 **时间戳** 作为版本号。
+在分布式系统中，无法使用单机的内存指针（Undo Log），因此采用 **时间戳**
+作为版本号。
 
 代表系统：**TiDB, CockroachDB**。
 
 ### 核心组件
+
 1.  **全局授时服务 (TSO)**：生成单调递增的时间戳。
 2.  **Key-Value 存储**：存储 `(Key, Timestamp) -> Value`。
 
@@ -189,6 +203,7 @@ public DataVersion read(Key key, ReadView readView) {
 ```
 
 ### 特点
+
 - **强一致性**：利用全局时间戳严格定义快照。
 - **无锁读**：完全不需要 Undo Log 链表回溯。
 
@@ -199,6 +214,7 @@ public DataVersion read(Key key, ReadView readView) {
 代表系统：**CouchDB, RocksDB (LevelDB)**。
 
 ### 核心思想
+
 - 永不原地修改数据。
 - 所有的 `PUT` / `DELETE` 操作都是顺序写入新的 SST 文件。
 - 旧版本通过 SST 文件的层级结构自然保留。
@@ -213,7 +229,9 @@ SST File Level 0:
 SST File Level 1:
 | Key=A, Seq=90, Value=OldX | <-- 旧版本
 ```
+
 ### 特点
+
 - **写入极快**（顺序 IO）。
 - **读取较慢**（需要合并多层 SST 文件）。
 - 依赖 **Sequence Number** 来判断版本新旧。
@@ -225,10 +243,10 @@ SST File Level 1:
 在分布式环境下，由于没有全局物理时钟，需要使用逻辑时钟来定序。
 
 ### Vector Clock (向量时钟)
+
 用于捕获事件因果关系 (Causality)，常见于 Riak、Cassandra 等 AP 系统。
 
 #### 数据结构
-
 
 ```
 class VectorClock {
@@ -237,15 +255,18 @@ Map<String, Long> clock; // Key: NodeId, Value: Logical Time
 ```
 
 #### 核心规则
+
 1.  **本地事件**：递增自己的时钟分量。
 2.  **发送消息**：携带当前的 Vector Clock。
 3.  **接收消息**：`myClock[node] = max(myClock[node], receivedClock[node])`。
 
 #### 优缺点
+
 - ✅ 精准判断因果关系。
 - ❌ 元数据随节点数线性增长 (O(N))，不适合大规模集群。
 
 ### Hybrid Logical Clock (混合逻辑时钟)
+
 结合了物理时钟和逻辑时钟，是 CockroachDB 等现代分布式数据库的基石。
 
 - **组成**：`(WallTime, LogicTime)`。
@@ -256,14 +277,15 @@ Map<String, Long> clock; // Key: NodeId, Value: Logical Time
 
 ## 总结与对比
 
-| 实现方式 | 代表系统 | 版本存储位置 | 核心依赖 | 优势 | 劣势 |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Undo Log** | MySQL InnoDB | 独立 Undo 表空间 | Undo Log, Roll Pointer | 索引稳定，主数据页干净 | Undo 膨胀，回滚慢 |
-| **Heap Tuple** | PostgreSQL | 主 Heap 表中 | xmin/xmax 规则 | 更新开销小 | 需要 VACUUM，索引膨胀 |
-| **时间戳排序** | TiDB, CRDB | KV 层多版本 | 全局 TSO | 分布式友好，强一致 | 依赖 TSO，存储放大 |
-| **追加式** | RocksDB | SST 文件 | Sequence Number | 写入性能极佳 | 读放大，Compaction 复杂 |
+| 实现方式       | 代表系统     | 版本存储位置     | 核心依赖               | 优势                   | 劣势                    |
+| :------------- | :----------- | :--------------- | :--------------------- | :--------------------- | :---------------------- |
+| **Undo Log**   | MySQL InnoDB | 独立 Undo 表空间 | Undo Log, Roll Pointer | 索引稳定，主数据页干净 | Undo 膨胀，回滚慢       |
+| **Heap Tuple** | PostgreSQL   | 主 Heap 表中     | xmin/xmax 规则         | 更新开销小             | 需要 VACUUM，索引膨胀   |
+| **时间戳排序** | TiDB, CRDB   | KV 层多版本      | 全局 TSO               | 分布式友好，强一致     | 依赖 TSO，存储放大      |
+| **追加式**     | RocksDB      | SST 文件         | Sequence Number        | 写入性能极佳           | 读放大，Compaction 复杂 |
 
 ### 关键术语对照
+
 - **Undo Log**：回滚日志，用于存储旧版本。
 - **Heap Page**：堆页，数据库主数据文件。
 - **Sequence Number (SeqNo)**：序列号，单机存储引擎的版本号。

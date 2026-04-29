@@ -1,29 +1,27 @@
 # BuzzCrow 技术文档站点
 
-基于 Jekyll + Just the Docs 构建的技术文档站点，专注于分布式系统、数据库和软件工程的深度解析。
+基于 Jekyll + Just the
+Docs 构建的技术文档站点，专注于分布式系统、数据库和软件工程的深度解析。
 
 ## 🌐 在线访问
 
-- **站点地址**: [https://buzzcrow.github.io/buzzcrow.github.io/](https://buzzcrow.github.io/buzzcrow.github.io/)
-- **GitHub 仓库**: [https://github.com/buzzcrow/buzzcrow.github.io](https://github.com/buzzcrow/buzzcrow.github.io)
-
-## 📚 文档目录
-
-### 分布式
-- [分布式一致性](/docs/分布式一致性/) - 理论演进、模型光谱与工程权衡
-- [分布式隔离性](/docs/分布式隔离性/) - 从 ACID 到分布式事务的并发边界
-- [多版本并发控制 (MVCC)](/docs/MVCC/) - 从理论到工程实现
+- **站点地址**:
+  [https://buzzcrow.github.io/buzzcrow.github.io/](https://buzzcrow.github.io/buzzcrow.github.io/)
+- **GitHub 仓库**:
+  [https://github.com/buzzcrow/buzzcrow.github.io](https://github.com/buzzcrow/buzzcrow.github.io)
 
 ## 🛠 技术栈
 
 - **静态站点生成器**: [Jekyll](https://jekyllrb.com/) 4.4.1
-- **主题**: [Just the Docs](https://just-the-docs.github.io/just-the-docs/) 0.12.0
+- **主题**: [Just the Docs](https://just-the-docs.github.io/just-the-docs/)
+  0.12.0
 - **部署**: GitHub Pages
 - **持续集成**: GitHub Actions
 
 ## 🚀 本地开发
 
 ### 前置要求
+
 - Ruby 3.0+
 - Bundler 2.0+
 
@@ -99,6 +97,7 @@ make run
 ## 🔄 部署
 
 站点通过 GitHub Pages 自动部署：
+
 - 推送到 `main` 分支时自动触发构建
 - 构建配置位于 `.github/workflows/pages.yml`
 - 生成的站点发布到 `gh-pages` 分支
