@@ -8,6 +8,11 @@ theme: just-the-docs
 url: "https://buzzcrow.github.io"
 baseurl: "/buzzcrow.github.io"  # 如果是项目站点，这行很重要
 
+# 插件设置
+plugins:
+  - jekyll-include-cache
+  - jekyll-seo-tag
+
 # 导航栏右侧的辅助链接
 aux_links:
   GitHub: https://github.com/buzzcrow
