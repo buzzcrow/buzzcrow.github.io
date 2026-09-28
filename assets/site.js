@@ -62,11 +62,11 @@
     window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true;}},{passive:true});window.addEventListener('resize',update);update();
   }
   function setFont(size){
-    if(!['16','17','18'].includes(String(size))) size='16';
+    if(!['16','18','20'].includes(String(size))) size='18';
     root.style.setProperty('--body-size',size+'px');
     $$('[data-font-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fontSize===String(size))));
   }
-  try{setFont(localStorage.getItem('crowdb-reading-size')||'16');}catch{setFont('16');}
+  try{setFont(localStorage.getItem('crowdb-reading-size')||'18');}catch{setFont('18');}
   $$('[data-font-size]').forEach(button=>button.addEventListener('click',()=>{
     setFont(button.dataset.fontSize);try{localStorage.setItem('crowdb-reading-size',button.dataset.fontSize);}catch{}
   }));

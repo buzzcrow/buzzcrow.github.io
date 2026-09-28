@@ -13,7 +13,7 @@
   --code:#202a25;
   --max:1184px;
   --reading:696px;
-  --body-size:16px;
+  --body-size:18px;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"PingFang SC","Microsoft YaHei",sans-serif;
   --mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace
 }
@@ -29,7 +29,7 @@ body {
   background:var(--paper);
   color:var(--ink);
   font-family:var(--sans);
-  font-size:16px;
+  font-size:18px;
   line-height:1.65;
   -webkit-font-smoothing:antialiased
 }
@@ -731,7 +731,7 @@ p {
   margin-top:15px
 }
 .journal-masthead .intro {
-  font-size:14px;
+  font-size:18px;
   max-width:365px;
   line-height:1.8;
   padding-bottom:3px
@@ -749,16 +749,14 @@ p {
 }
 .journal-feature {
   margin:34px 0 44px;
-  display:grid;
-  grid-template-columns:1fr 1.13fr;
-  gap:0;
+  display:block;
   border:1px solid var(--line);
   border-radius:5px;
   overflow:hidden;
   background:var(--white)
 }
 .journal-feature-text {
-  padding:37px 38px;
+  padding:42px 46px;
   display:flex;
   flex-direction:column;
   align-items:flex-start;
@@ -767,11 +765,12 @@ p {
 .journal-feature h2 {
   font-size:34px;
   margin:20px 0 18px;
-  max-width:330px
+  max-width:750px
 }
 .journal-feature .excerpt {
-  font-size:14px;
-  line-height:1.85
+  font-size:18px;
+  line-height:1.85;
+  max-width:760px
 }
 .journal-feature .author-small {
   margin:23px 0
@@ -798,19 +797,6 @@ p {
 .author-small strong {
   color:var(--ink);
   font-weight:550
-}
-.journal-feature-art {
-  background:#e9ede1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  min-height:352px
-}
-.journal-feature-art svg,.journal-feature-art img {
-  width:100%;
-  height:100%;
-  max-height:420px
 }
 .filter-bar {
   display:flex;
@@ -870,39 +856,25 @@ p {
   padding-bottom:67px
 }
 .post-row {
-  display:grid;
-  grid-template-columns:1fr 122px;
-  gap:35px;
+  display:block;
   padding:27px 0;
   border-bottom:1px solid var(--line)
 }
 .post-row h3 {
   font-size:23px;
   margin:11px 0 13px;
-  max-width:530px
+  max-width:760px
 }
 .post-row p {
-  font-size:13px;
+  font-size:18px;
   line-height:1.8;
-  max-width:560px
+  max-width:760px
 }
 .post-row .meta {
   margin-top:18px
 }
 .post-row:hover h3 {
   color:var(--accent)
-}
-.post-row-art {
-  width:122px;
-  height:117px;
-  margin-top:3px;
-  border-radius:3px;
-  background:#e9ece1;
-  border:1px solid var(--line)
-}
-.post-row-art svg,.post-row-art img {
-  width:100%;
-  height:100%
 }
 .journal-sidebar {
   border-left:1px solid var(--line);
@@ -913,11 +885,11 @@ p {
   margin:12px 0
 }
 .journal-sidebar p {
-  font-size:12px;
+  font-size:16px;
   line-height:1.85
 }
 .journal-sidebar .text-link {
-  font-size:12px;
+  font-size:16px;
   margin-top:16px
 }
 .sidebar-section+.sidebar-section {
@@ -952,7 +924,7 @@ p {
   font-size:24px
 }
 .journal-bottom p {
-  font-size:13px;
+  font-size:18px;
   margin-top:9px
 }
 .post-top {
@@ -978,7 +950,7 @@ p {
 }
 .post-deck {
   max-width:675px;
-  font-size:17px;
+  font-size:18px;
   line-height:1.75
 }
 .post-top .byline {
@@ -1001,37 +973,6 @@ p {
   font:10px/1.6 var(--mono);
   color:var(--muted)
 }
-.post-banner {
-  max-width:960px;
-  margin:0 auto 34px;
-  border:1px solid var(--line);
-  border-radius:5px;
-  background:#edf0e6;
-  overflow:hidden;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  align-items:center;
-  min-height:214px
-}
-.post-banner-copy {
-  padding:26px 36px
-}
-.post-banner-copy h2 {
-  font-size:23px;
-  margin:13px 0
-}
-.post-banner-copy p {
-  font-size:12px;
-  max-width:340px
-}
-.post-banner-art {
-  height:230px;
-  overflow:hidden
-}
-.post-banner-art svg,.post-banner-art img {
-  width:100%;
-  height:100%
-}
 .article-layout {
   display:grid;
   grid-template-columns:minmax(0,var(--reading)) 205px;
@@ -1051,7 +992,7 @@ p {
   margin:0 0 1.25em
 }
 .prose p.lead {
-  font-size:17px;
+  font-size:1.05em;
   line-height:1.85;
   color:var(--ink)
 }
@@ -1089,7 +1030,7 @@ p {
   margin-bottom:9px
 }
 .prose code:not(pre code) {
-  font:12px/1.6 var(--mono);
+  font:.85em/1.6 var(--mono);
   background:#ebeee3;
   padding:3px 5px;
   border-radius:3px;
@@ -1118,7 +1059,7 @@ p {
   background:#f4f0e5;
   border-radius:3px;
   margin:28px 0;
-  font-size:14px;
+  font-size:16px;
   line-height:1.8
 }
 .prose .callout strong {
@@ -1142,7 +1083,7 @@ p {
 .prose table {
   border-collapse:collapse;
   width:100%;
-  font-size:13px;
+  font-size:16px;
   margin:26px 0
 }
 .prose th,.prose td {
@@ -1236,7 +1177,7 @@ p {
   font-size:20px
 }
 .article-footer p {
-  font-size:13px;
+  font-size:16px;
   margin:10px 0 20px
 }
 .architecture-figure {
@@ -1892,7 +1833,7 @@ p {
     grid-template-columns:1fr 220px;
     gap:30px
   }
-  .post-top,.post-banner,.article-layout {
+  .post-top,.article-layout {
     max-width:900px
   }
   .article-layout {
@@ -2049,21 +1990,17 @@ p {
     font-size:37px
   }
   .journal-masthead .intro {
-    font-size:13px;
+    font-size:17px;
     max-width:288px
   }
   .journal-feature {
-    grid-template-columns:1fr 1fr;
     margin-top:28px
   }
   .journal-feature h2 {
     font-size:29px
   }
   .journal-feature .excerpt {
-    font-size:13px
-  }
-  .journal-feature-art {
-    min-height:340px
+    font-size:17px
   }
   .writing-grid {
     grid-template-columns:minmax(0,1fr) 190px;
@@ -2073,12 +2010,7 @@ p {
     padding-left:20px
   }
   .post-row {
-    grid-template-columns:1fr 85px;
-    gap:18px
-  }
-  .post-row-art {
-    width:85px;
-    height:95px
+    display:block
   }
   .post-row h3 {
     font-size:21px
@@ -2097,7 +2029,7 @@ p {
     padding-top:30px
   }
   .post-deck {
-    font-size:16px
+    font-size:18px
   }
   .article-layout {
     grid-template-columns:minmax(0,1fr);
@@ -2136,18 +2068,6 @@ p {
   }
   .prose {
     font-size:var(--body-size)
-  }
-  .post-banner-copy {
-    padding:23px
-  }
-  .post-banner-copy h2 {
-    font-size:22px
-  }
-  .post-banner-art {
-    height:207px
-  }
-  .post-banner {
-    min-height:200px
   }
   .docs-layout {
     grid-template-columns:157px minmax(0,1fr);
@@ -2469,20 +2389,10 @@ p {
   .journal-masthead .intro {
     max-width:370px;
     margin-top:17px;
-    font-size:13px
+    font-size:17px
   }
   .journal-feature {
-    display:flex;
-    flex-direction:column-reverse;
     margin:24px 0 30px
-  }
-  .journal-feature-art {
-    min-height:0;
-    height:233px
-  }
-  .journal-feature-art svg,.journal-feature-art img {
-    height:100%;
-    width:100%
   }
   .journal-feature-text {
     padding:24px
@@ -2523,20 +2433,14 @@ p {
     padding-bottom:36px
   }
   .post-row {
-    grid-template-columns:1fr 78px;
-    gap:18px;
     padding:23px 0
-  }
-  .post-row-art {
-    width:78px;
-    height:91px
   }
   .post-row h3 {
     font-size:21px;
     margin-top:10px
   }
   .post-row p {
-    font-size:13px
+    font-size:17px
   }
   .post-row .meta {
     gap:7px;
@@ -2583,7 +2487,7 @@ p {
     margin-top:14px
   }
   .post-deck {
-    font-size:15px;
+    font-size:18px;
     line-height:1.8
   }
   .post-top .byline {
@@ -2594,39 +2498,12 @@ p {
   .byline .updated {
     font-size:9px
   }
-  .post-banner {
-    grid-template-columns:1fr 1fr;
-    min-height:170px;
-    margin-bottom:26px
-  }
-  .post-banner-copy {
-    padding:18px 0 18px 18px
-  }
-  .post-banner-copy h2 {
-    font-size:18px;
-    margin-block:10px
-  }
-  .post-banner-copy .eyebrow {
-    font-size:8px;
-    letter-spacing:.05em
-  }
-  .post-banner-copy p {
-    font-size:10px
-  }
-  .post-banner-art {
-    height:182px
-  }
-  .post-banner-art svg,.post-banner-art img {
-    width:100%;
-    height:100%;
-    object-fit:cover
-  }
   .prose {
     font-size:var(--body-size);
     line-height:1.85
   }
   .prose p.lead {
-    font-size:16px;
+    font-size:1.05em;
     line-height:1.85
   }
   .prose h2 {
@@ -2641,7 +2518,7 @@ p {
     padding-left:18px
   }
   .prose .callout {
-    font-size:13px;
+    font-size:16px;
     padding:17px
   }
   .prose .code-block pre,.prose .highlighter-rouge pre {
@@ -2649,7 +2526,7 @@ p {
     padding-inline:15px
   }
   .prose table {
-    font-size:11px
+    font-size:15px
   }
   .prose th,.prose td {
     padding:11px 8px
@@ -2871,15 +2748,6 @@ p {
   .sidebar-section.rss-section {
     grid-column:auto
   }
-  .post-banner {
-    grid-template-columns:1fr
-  }
-  .post-banner-art {
-    display:none
-  }
-  .post-banner-copy {
-    padding:20px
-  }
   .post-top h1 {
     font-size:31px
   }
@@ -2907,7 +2775,7 @@ p {
   }
 }
 @media print {
-  .site-header,.announcement,.site-footer,.toc,.toc-mobile,.reading-progress,.post-banner,.docs-sidebar,.docs-mobile,.copy-button,.article-footer,.back-link {
+  .site-header,.announcement,.site-footer,.toc,.toc-mobile,.reading-progress,.docs-sidebar,.docs-mobile,.copy-button,.article-footer,.back-link {
     display:none!important
   }
   body {
@@ -2952,10 +2820,32 @@ p {
     overflow-wrap:anywhere
   }
 }
-/* External SVG illustrations use the same intrinsic aspect ratio as inline SVG. */
-.journal-feature-art img,.post-row-art img,.post-banner-art img,.teaser-art img {
-  object-fit:contain
+/* Journal reading scale. Keep compact metadata below the 18px text scale. */
+@media screen {
+  body.journal .primary-nav { font-size:16px }
+  body.journal .brand-section { font-size:16px }
+  body.journal .eyebrow,body.journal .tag { font-size:12px }
+  body.journal .meta { font-size:12px }
+  body.journal .author-small { font-size:14px }
+  body.journal .filter-button { font-size:14px }
+  body.journal .search-input { font-size:16px }
+  body.journal .journal-sidebar h3 { font-size:19px }
+  body.journal .sidebar-status { font-size:14px }
+  body.journal .toc nav,body.journal .toc-mobile nav { font-size:13px }
+  body.journal .reading-controls label { font-size:12px }
+  body.journal .font-controls button { font-size:13px }
+  body.journal .footer-description,body.journal .footer-links div { font-size:14px }
+  body.journal .footer-bottom { font-size:12px }
 }
+@media screen and (max-width:860px) {
+  body.journal .primary-nav { font-size:15px }
+  body.journal .journal-feature .excerpt { font-size:17px }
+}
+@media screen and (max-width:600px) {
+  body.journal .journal-masthead .intro,body.journal .post-row p { font-size:17px }
+  body.journal .toc-mobile { font-size:14px }
+}
+/* External SVG illustrations use the same intrinsic aspect ratio as inline SVG. */
 /* With scripting disabled, do not present inactive enhancement controls. */
 .no-js .font-controls,.no-js .reading-controls,.no-js .mobile-menu {
   display:none

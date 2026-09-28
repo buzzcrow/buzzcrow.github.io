@@ -87,13 +87,12 @@ category: Engineering
 tags: [Consensus, Recovery]
 description: "A factual search preview, not a string of keywords."
 excerpt: "The short promise shown in the article listing."
-art: editorial
 image: /assets/og-editorial.png
 ---
 ```
 
-`art` selects `/assets/<art>.svg`: use `editorial`, `iceberg` or create a new asset.
-Optional `figure_title`, `figure_caption` and `image_alt` customize the banner.
+`image` supplies the social preview image. Decorative article and card artwork is
+not shown on the site; keep explanatory diagrams in the article body when useful.
 Only one article should have `featured: true`; other cards are generated from
 `site.posts`. The layout calculates reading time. Do not manually add post cards.
 The original first article retains `/blog/why-we-are-building-crowdb/`.
@@ -110,8 +109,9 @@ The original first article retains `/blog/why-we-are-building-crowdb/`.
 
 Use warm paper `#faf9f6`, ink `#242b28`, muted `#646b64`, terracotta `#b74324`
 and pale sage surfaces. This supersedes the former neon-green palette.
-Body text defaults to 16px, with a roughly 696px article column and generous line
-height. Readers may choose 17 or 18px. The product hero is not the article scale.
+Body and article text default to 18px, with a roughly 696px article column and
+generous line height. Readers may choose 16, 18 or 20px for articles. The product
+hero is not the article scale.
 Prioritize desktop and iPad portrait/landscape, while remaining usable at 320px.
 Use solid shapes for implemented mechanisms and dashed shapes for planned paths.
 Do not add decorative photography or external fonts to fill empty space.
