@@ -718,24 +718,6 @@ p {
   font:10px/1.6 var(--mono);
   color:var(--muted)
 }
-.journal-masthead {
-  padding:45px 0 39px;
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:40px;
-  border-bottom:1px solid var(--line)
-}
-.journal-masthead h1 {
-  font-size:46px;
-  margin-top:15px
-}
-.journal-masthead .intro {
-  font-size:18px;
-  max-width:365px;
-  line-height:1.8;
-  padding-bottom:3px
-}
 .meta {
   display:flex;
   align-items:center;
@@ -896,14 +878,6 @@ p {
   margin-top:30px;
   padding-top:25px;
   border-top:1px solid var(--line)
-}
-.sidebar-status {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-top:13px;
-  font-size:12px
 }
 .no-results {
   padding:35px 0;
@@ -1820,9 +1794,6 @@ p {
   .teaser-art {
     height:130px
   }
-  .journal-masthead h1 {
-    font-size:40px
-  }
   .journal-feature-text {
     padding:27px
   }
@@ -1982,16 +1953,6 @@ p {
   }
   .footer-links {
     gap:33px
-  }
-  .journal-masthead {
-    gap:28px
-  }
-  .journal-masthead h1 {
-    font-size:37px
-  }
-  .journal-masthead .intro {
-    font-size:17px;
-    max-width:288px
   }
   .journal-feature {
     margin-top:28px
@@ -2378,19 +2339,6 @@ p {
     display:block;
     margin:5px 0
   }
-  .journal-masthead {
-    display:block;
-    padding:31px 0 26px
-  }
-  .journal-masthead h1 {
-    font-size:36px;
-    margin-top:13px
-  }
-  .journal-masthead .intro {
-    max-width:370px;
-    margin-top:17px;
-    font-size:17px
-  }
   .journal-feature {
     margin:24px 0 30px
   }
@@ -2451,7 +2399,7 @@ p {
     border-top:1px solid var(--line);
     padding:24px 0 0;
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:1fr;
     gap:24px
   }
   .sidebar-section+.sidebar-section {
@@ -2460,7 +2408,6 @@ p {
     padding:0
   }
   .sidebar-section.rss-section {
-    grid-column:1 / -1;
     padding-top:20px;
     border-top:1px solid var(--line)
   }
@@ -2733,20 +2680,11 @@ p {
     font-size:11px;
     padding:11px 13px
   }
-  .journal-masthead h1 {
-    font-size:32px
-  }
   .journal-feature h2 {
     font-size:27px
   }
   .journal-feature-text {
     padding:20px
-  }
-  .journal-sidebar {
-    grid-template-columns:1fr
-  }
-  .sidebar-section.rss-section {
-    grid-column:auto
   }
   .post-top h1 {
     font-size:31px
@@ -2830,7 +2768,6 @@ p {
   body.journal .filter-button { font-size:14px }
   body.journal .search-input { font-size:16px }
   body.journal .journal-sidebar h3 { font-size:19px }
-  body.journal .sidebar-status { font-size:14px }
   body.journal .toc nav,body.journal .toc-mobile nav { font-size:13px }
   body.journal .reading-controls label { font-size:12px }
   body.journal .font-controls button { font-size:13px }
@@ -2842,7 +2779,7 @@ p {
   body.journal .journal-feature .excerpt { font-size:17px }
 }
 @media screen and (max-width:600px) {
-  body.journal .journal-masthead .intro,body.journal .post-row p { font-size:17px }
+  body.journal .post-row p { font-size:17px }
   body.journal .toc-mobile { font-size:14px }
 }
 /* External SVG illustrations use the same intrinsic aspect ratio as inline SVG. */

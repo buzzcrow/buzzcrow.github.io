@@ -76,14 +76,14 @@ reader act on the example; does the writing sound like an engineer with an opini
 ## Publishing an article
 
 Create `_posts/YYYY-MM-DD-short-slug.md`. Keep one primary category from `Product`,
-`Engineering`, `AI & Data`, or `Guides`. Use tags for narrower subjects.
+`Guides`, or `Technical Internal`. Use tags for narrower subjects.
 
 ```yaml
 ---
 title: "A specific subject, mechanism or result"
 subtitle: "One sentence that makes the scope clear."
 date: 2026-10-01 10:00:00 +0800
-category: Engineering
+category: Technical Internal
 tags: [Consensus, Recovery]
 description: "A factual search preview, not a string of keywords."
 excerpt: "The short promise shown in the article listing."
@@ -93,8 +93,9 @@ image: /assets/og-editorial.png
 
 `image` supplies the social preview image. Decorative article and card artwork is
 not shown on the site; keep explanatory diagrams in the article body when useful.
-Only one article should have `featured: true`; other cards are generated from
-`site.posts`. The layout calculates reading time. Do not manually add post cards.
+Only one article should have `featured: true`; it appears in the homepage's
+featured article section. Other cards are generated from `site.posts`. The layout
+calculates reading time. Do not manually add post cards.
 The original first article retains `/blog/why-we-are-building-crowdb/`.
 
 ## Source layout and visual system
