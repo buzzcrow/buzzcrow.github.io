@@ -1,0 +1,1069 @@
+---
+---
+
+$ink: #11110f;
+$paper: #f1eee6;
+$paper-deep: #e6e1d6;
+$signal: #c8ff3d;
+$muted: #6c6a63;
+$line: rgba(17, 17, 15, 0.2);
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: $ink;
+  background: $paper;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 3px solid $signal;
+  outline-offset: 4px;
+}
+
+::selection {
+  color: $ink;
+  background: $signal;
+}
+
+.site-header {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 76px;
+  padding: 0 4vw;
+  border-bottom: 1px solid $line;
+}
+
+.wordmark {
+  display: inline-flex;
+  gap: 0.7rem;
+  align-items: center;
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.wordmark-mark {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  color: $signal;
+  background: $ink;
+  font-size: 0.78rem;
+  letter-spacing: -0.03em;
+}
+
+.site-nav {
+  display: flex;
+  gap: clamp(1.1rem, 3vw, 3rem);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.site-nav a {
+  transition: opacity 160ms ease;
+}
+
+.site-nav a:hover {
+  opacity: 0.5;
+}
+
+.hero {
+  position: relative;
+  min-height: 680px;
+  padding: clamp(4rem, 9vw, 8.5rem) 4vw 3rem;
+  overflow: hidden;
+  border-bottom: 1px solid $line;
+}
+
+.hero-kicker,
+.section-heading > p,
+.manifesto-label,
+.layer-label,
+.footer-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.hero-kicker {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 2.8rem;
+}
+
+.hero-kicker span {
+  width: 38px;
+  height: 3px;
+  background: $signal;
+  box-shadow: 0 0 0 1px $ink;
+}
+
+.hero h1 {
+  max-width: 1260px;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3.4rem, 9.1vw, 9.2rem);
+  font-weight: 400;
+  letter-spacing: -0.065em;
+  line-height: 0.84;
+}
+
+.hero h1 em {
+  font-weight: 400;
+}
+
+.hero-bottom {
+  display: grid;
+  grid-template-columns: minmax(280px, 520px) auto;
+  gap: 3rem;
+  align-items: end;
+  justify-content: space-between;
+  margin-top: clamp(3rem, 8vw, 6.5rem);
+}
+
+.hero-intro {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  line-height: 1.55;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.button {
+  display: inline-flex;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  padding: 0 1.15rem;
+  border: 1px solid $ink;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  transition:
+    color 160ms ease,
+    background 160ms ease;
+}
+
+.button-primary {
+  color: $paper;
+  background: $ink;
+}
+
+.button-primary:hover {
+  color: $ink;
+  background: $signal;
+}
+
+.button-quiet:hover {
+  color: $paper;
+  background: $ink;
+}
+
+.hero-index {
+  position: absolute;
+  top: 6rem;
+  right: -0.5rem;
+  z-index: -1;
+  color: rgba(17, 17, 15, 0.045);
+  font-size: clamp(15rem, 33vw, 34rem);
+  font-weight: 900;
+  letter-spacing: -0.12em;
+  line-height: 0.8;
+  user-select: none;
+}
+
+.signal-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(145px, 1fr)) minmax(250px, 1.3fr);
+  border-bottom: 1px solid $line;
+  background: $paper-deep;
+}
+
+.signal-strip > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 0.65rem;
+  align-content: center;
+  min-height: 84px;
+  padding: 1rem 1.4rem;
+  border-right: 1px solid $line;
+}
+
+.signal-strip strong {
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+}
+
+.signal-strip small {
+  grid-column: 2;
+  color: $muted;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.signal-dot {
+  width: 8px;
+  height: 8px;
+  margin-top: 0.36rem;
+  border: 1px solid $ink;
+  border-radius: 50%;
+}
+
+.signal-dot.live {
+  background: $signal;
+}
+
+.signal-dot.active {
+  background: repeating-linear-gradient(45deg, $ink 0 1px, transparent 1px 3px);
+}
+
+.signal-dot.planned {
+  background: transparent;
+}
+
+.signal-strip .signal-repo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-right: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.signal-repo span {
+  color: $muted;
+}
+
+.signal-repo a {
+  border-bottom: 1px solid $ink;
+}
+
+.writing-section {
+  padding: clamp(5rem, 10vw, 9rem) 4vw;
+}
+
+.section-heading {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 3fr;
+  align-items: start;
+  margin-bottom: clamp(3rem, 7vw, 6rem);
+}
+
+.section-heading p {
+  margin: 0.6rem 0 0;
+}
+
+.section-heading h2 {
+  max-width: 800px;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3rem, 6vw, 6rem);
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+}
+
+.post-list {
+  border-top: 1px solid $ink;
+}
+
+.post-card {
+  display: grid;
+  grid-template-columns: minmax(80px, 1fr) 3fr auto;
+  gap: 1.5rem;
+  padding: 2.4rem 0;
+  border-bottom: 1px solid $line;
+  transition:
+    padding 180ms ease,
+    background 180ms ease;
+}
+
+.post-card:hover {
+  padding-right: 1rem;
+  padding-left: 1rem;
+  background: $signal;
+}
+
+.post-number {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.15rem;
+  font-style: italic;
+}
+
+.post-card-meta {
+  display: flex;
+  gap: 1rem;
+  color: $muted;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.post-card-meta span::after {
+  margin-left: 1rem;
+  content: "·";
+}
+
+.post-card h3 {
+  max-width: 850px;
+  margin: 0.7rem 0 0.55rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 4vw, 4.2rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.post-card p {
+  max-width: 640px;
+  margin: 0;
+  color: $muted;
+  font-size: 0.95rem;
+}
+
+.post-card:hover p,
+.post-card:hover .post-card-meta {
+  color: $ink;
+}
+
+.post-arrow {
+  align-self: center;
+  font-size: 1.5rem;
+}
+
+.architecture-section {
+  padding: clamp(5rem, 10vw, 9rem) 4vw;
+  color: $paper;
+  background: $ink;
+}
+
+.section-heading.inverse p {
+  color: $signal;
+}
+
+.layer-stack {
+  border-top: 1px solid rgba(241, 238, 230, 0.4);
+}
+
+.layer {
+  display: grid;
+  grid-template-columns: minmax(80px, 1fr) 3fr auto;
+  gap: 1.5rem;
+  align-items: center;
+  min-height: 150px;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid rgba(241, 238, 230, 0.25);
+}
+
+.layer-number {
+  color: $signal;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.1rem;
+  font-style: italic;
+}
+
+.layer-label {
+  margin: 0 0 0.35rem;
+  color: rgba(241, 238, 230, 0.55);
+}
+
+.layer h3 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3.5vw, 3.4rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+}
+
+.layer p:last-child {
+  max-width: 600px;
+  margin: 0.3rem 0 0;
+  color: rgba(241, 238, 230, 0.6);
+}
+
+.layer-state {
+  padding: 0.4rem 0.55rem;
+  border: 1px solid rgba(241, 238, 230, 0.35);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.architecture-note {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 3rem;
+  margin-top: 4rem;
+  padding-left: 25%;
+}
+
+.architecture-note > p {
+  max-width: 700px;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.45rem, 2.6vw, 2.4rem);
+  line-height: 1.3;
+}
+
+.text-link {
+  display: inline-block;
+  align-self: end;
+  justify-self: start;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid $ink;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.text-link.light {
+  border-color: $signal;
+}
+
+.manifesto {
+  padding: clamp(5rem, 12vw, 11rem) 4vw;
+  text-align: center;
+}
+
+.manifesto-label {
+  margin: 0;
+}
+
+.manifesto blockquote {
+  max-width: 1100px;
+  margin: 2.2rem auto;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3rem, 7vw, 7rem);
+  font-style: italic;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+}
+
+.manifesto > p:last-child {
+  max-width: 570px;
+  margin: 0 auto;
+  color: $muted;
+}
+
+.site-footer {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 2rem;
+  padding: 3rem 4vw;
+  color: $paper;
+  background: $ink;
+  border-top: 1px solid rgba(241, 238, 230, 0.2);
+}
+
+.site-footer p {
+  margin: 0.5rem 0 0;
+  color: rgba(241, 238, 230, 0.55);
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.footer-credit {
+  justify-self: end;
+  font-size: 0.78rem;
+}
+
+.post-header {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(4rem, 10vw, 9rem) 4vw 4rem;
+}
+
+.post-back {
+  display: inline-block;
+  margin-bottom: 5rem;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.post-meta {
+  display: flex;
+  gap: 1rem;
+  color: $muted;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.post-meta > *:not(:last-child)::after {
+  margin-left: 1rem;
+  content: "·";
+}
+
+.post-header h1 {
+  max-width: 1050px;
+  margin: 1.6rem 0 1.4rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3.7rem, 8vw, 8.5rem);
+  font-weight: 400;
+  letter-spacing: -0.07em;
+  line-height: 0.9;
+}
+
+.post-deck {
+  max-width: 790px;
+  margin: 0;
+  color: #383832;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.25rem, 2.2vw, 1.8rem);
+  line-height: 1.4;
+}
+
+.post-byline {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  margin-top: 2.5rem;
+  font-size: 0.76rem;
+}
+
+.byline-mark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  color: $paper;
+  background: $ink;
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.post-rule {
+  max-width: 1180px;
+  height: 1px;
+  margin: 0 auto;
+  background: $ink;
+}
+
+.post-rule span {
+  display: block;
+  width: 18%;
+  height: 5px;
+  background: $signal;
+}
+
+.post-content {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(4rem, 8vw, 7rem) 2rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.08rem, 1.45vw, 1.22rem);
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.post-content > p:first-child {
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  line-height: 1.5;
+}
+
+.post-content > p:first-child::first-letter {
+  float: left;
+  margin: 0.08em 0.08em 0 0;
+  font-size: 4.2em;
+  font-weight: 700;
+  line-height: 0.72;
+}
+
+.post-content h2 {
+  margin: 4.5rem 0 1.3rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.post-content h3 {
+  margin: 2.8rem 0 0.8rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.post-content a {
+  border-bottom: 1px solid $ink;
+}
+
+.post-content a:hover {
+  background: $signal;
+}
+
+.post-content blockquote {
+  margin: 3.5rem -12%;
+  padding: 2.2rem 12%;
+  border-top: 1px solid $ink;
+  border-bottom: 1px solid $ink;
+  font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.post-content blockquote p {
+  margin: 0;
+}
+
+.post-content code {
+  padding: 0.1rem 0.3rem;
+  background: $paper-deep;
+  font-size: 0.88em;
+}
+
+.post-content .architecture-diagram {
+  margin: 3.5rem -22%;
+  padding: 1.25rem;
+  border: 1px solid $ink;
+  background: #e9e5da;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.architecture-diagram figcaption {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid $ink;
+}
+
+.architecture-diagram figcaption span,
+.architecture-layer-title,
+.architecture-flow span {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.architecture-diagram figcaption strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.architecture-clients,
+.architecture-hardware {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.55rem;
+}
+
+.architecture-clients span,
+.architecture-hardware span {
+  padding: 0.7rem 0.5rem;
+  border: 1px solid $ink;
+  background: $paper;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.architecture-flow {
+  position: relative;
+  display: grid;
+  min-height: 54px;
+  place-items: center;
+}
+
+.architecture-flow::before {
+  width: 1px;
+  height: 100%;
+  background: $ink;
+  content: "";
+}
+
+.architecture-flow::after {
+  position: absolute;
+  bottom: 7px;
+  width: 7px;
+  height: 7px;
+  border-right: 1px solid $ink;
+  border-bottom: 1px solid $ink;
+  content: "";
+  transform: rotate(45deg);
+}
+
+.architecture-flow span {
+  position: absolute;
+  padding: 0.2rem 0.45rem;
+  color: $muted;
+  background: #e9e5da;
+}
+
+.architecture-layer {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid $ink;
+  box-shadow: 5px 5px 0 $ink;
+}
+
+.architecture-layer-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 1rem;
+  border-right: 1px solid currentColor;
+}
+
+.architecture-layer-title span {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.architecture-nodes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.55rem;
+}
+
+.architecture-nodes > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 60px;
+  padding: 0.65rem;
+  border: 1px solid currentColor;
+  text-align: center;
+}
+
+.architecture-nodes strong {
+  font-size: 0.78rem;
+}
+
+.architecture-nodes small {
+  margin-top: 0.15rem;
+  color: $muted;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.74rem;
+}
+
+.architecture-access {
+  background: $signal;
+}
+
+.architecture-chunk {
+  background: $paper;
+}
+
+.architecture-chunk > p {
+  grid-column: 2;
+  margin: 0.75rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px dashed $line;
+  color: $muted;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.architecture-kv {
+  color: $paper;
+  background: $ink;
+  box-shadow: 5px 5px 0 $signal;
+}
+
+.architecture-kv-nodes {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.architecture-hardware span {
+  color: $paper;
+  background: $ink;
+}
+
+.architecture-flow-out span {
+  color: $ink;
+}
+
+.post-content .status-note {
+  margin: 3.5rem 0;
+  padding: 1.4rem 1.5rem;
+  border-left: 5px solid $signal;
+  background: $ink;
+  color: $paper;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.93rem;
+}
+
+.status-note strong {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: $signal;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.status-note p {
+  margin: 0;
+}
+
+.post-end {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 2rem;
+  max-width: 1180px;
+  margin: 0 auto clamp(5rem, 10vw, 9rem);
+  padding: 3rem 4vw;
+  border-top: 1px solid $ink;
+  border-bottom: 1px solid $ink;
+}
+
+.post-end-mark {
+  font-size: clamp(3rem, 7vw, 7rem);
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  line-height: 1;
+}
+
+.post-end p {
+  max-width: 620px;
+  margin: 0 0 0.7rem;
+}
+
+.post-end .text-link {
+  margin-top: 1rem;
+}
+
+@media (max-width: 800px) {
+  .site-header {
+    min-height: 66px;
+  }
+
+  .site-nav a:not(:last-child) {
+    display: none;
+  }
+
+  .hero {
+    min-height: auto;
+  }
+
+  .hero-bottom,
+  .section-heading,
+  .architecture-note,
+  .site-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .signal-strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .signal-strip > div:nth-child(3) {
+    border-right: 0;
+  }
+
+  .signal-strip .signal-repo {
+    grid-column: 1 / -1;
+    border-top: 1px solid $line;
+  }
+
+  .section-heading {
+    gap: 1rem;
+  }
+
+  .post-card,
+  .layer {
+    grid-template-columns: 48px 1fr auto;
+  }
+
+  .architecture-note {
+    padding-left: 0;
+  }
+
+  .site-footer {
+    gap: 2rem;
+  }
+
+  .footer-credit {
+    justify-self: start;
+  }
+
+  .post-content .architecture-diagram,
+  .post-content blockquote {
+    margin-right: 0;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero h1 {
+    font-size: clamp(2.75rem, 14.5vw, 3.25rem);
+  }
+
+  .signal-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .signal-strip > div {
+    border-right: 0;
+    border-bottom: 1px solid $line;
+  }
+
+  .signal-strip .signal-repo {
+    grid-column: auto;
+    border-top: 0;
+    border-bottom: 0;
+  }
+
+  .post-card,
+  .layer {
+    grid-template-columns: 1fr auto;
+  }
+
+  .post-number,
+  .layer-number {
+    display: none;
+  }
+
+  .layer-state {
+    display: none;
+  }
+
+  .post-header {
+    padding-right: 1.2rem;
+    padding-left: 1.2rem;
+  }
+
+  .post-back {
+    margin-bottom: 3rem;
+  }
+
+  .post-meta {
+    flex-wrap: wrap;
+  }
+
+  .post-meta > *::after {
+    display: none;
+  }
+
+  .post-content {
+    padding-right: 1.2rem;
+    padding-left: 1.2rem;
+  }
+
+  .post-content .architecture-diagram {
+    padding: 0.75rem;
+  }
+
+  .architecture-diagram figcaption {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .architecture-layer {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    box-shadow: 3px 3px 0 $ink;
+  }
+
+  .architecture-layer-title {
+    flex-direction: row;
+    padding: 0 0 0.55rem;
+    border-right: 0;
+    border-bottom: 1px solid currentColor;
+  }
+
+  .architecture-layer-title span {
+    font-size: 1rem;
+  }
+
+  .architecture-nodes {
+    gap: 0.35rem;
+  }
+
+  .architecture-nodes > div {
+    min-height: 52px;
+    padding: 0.4rem 0.2rem;
+  }
+
+  .architecture-nodes strong {
+    font-size: 0.66rem;
+  }
+
+  .architecture-nodes small {
+    font-size: 0.64rem;
+  }
+
+  .architecture-chunk > p {
+    grid-column: 1;
+  }
+
+  .architecture-kv {
+    box-shadow: 3px 3px 0 $signal;
+  }
+
+  .architecture-kv-nodes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .architecture-clients span,
+  .architecture-hardware span {
+    padding: 0.6rem 0.2rem;
+    font-size: 0.6rem;
+  }
+
+  .post-end {
+    grid-template-columns: 1fr;
+    margin-right: 1.2rem;
+    margin-left: 1.2rem;
+  }
+}

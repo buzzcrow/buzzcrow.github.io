@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'en' }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% seo %}
+    <meta name="theme-color" content="#11110f" />
+    <link
+      rel="alternate"
+      type="application/atom+xml"
+      title="{{ site.title }}"
+      href="{{ '/feed.xml' | relative_url }}"
+    />
+    <link rel="preconnect" href="https://github.com" />
+    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}" />
+  </head>
+  <body class="{{ page.body_class | default: 'page' }}">
+    <header class="site-header">
+      <a
+        class="wordmark"
+        href="{{ '/' | relative_url }}"
+        aria-label="CROWDB Journal home"
+      >
+        <span class="wordmark-mark">C/</span>
+        <span>CROWDB</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="{{ '/' | relative_url }}#writing">Writing</a>
+        <a href="{{ '/' | relative_url }}#architecture">Architecture</a>
+        <a href="https://github.com/buzzcrow/crowdb"
+          >GitHub <span aria-hidden="true">↗</span></a
+        >
+      </nav>
+    </header>
+
+    <main>{{ content }}</main>
+
+    <footer class="site-footer">
+      <div>
+        <span class="footer-label">CROWDB Journal</span>
+        <p>Notes on building storage from consensus to the data path.</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://crowdb.dev">crowdb.dev</a>
+        <a href="https://github.com/buzzcrow/crowdb">Source</a>
+        <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
+      </div>
+      <p class="footer-credit">Written by Gian Crow.</p>
+    </footer>
+  </body>
+</html>

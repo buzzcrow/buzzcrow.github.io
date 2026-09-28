@@ -1,0 +1,46 @@
+title: CROWDB Journal
+tagline: Notes from inside a distributed storage system
+description:
+  Engineering notes on CROWDB, a distributed storage platform for S3 objects,
+  Iceberg tables, and AI datasets.
+url: "https://buzzcrow.github.io"
+baseurl: ""
+lang: en
+locale: en_US
+timezone: UTC
+
+permalink: /blog/:title/
+markdown: kramdown
+highlighter: rouge
+
+plugins:
+  - jekyll-seo-tag
+
+author:
+  name: Gian Crow
+  url: https://github.com/buzzcrow
+
+social:
+  name: CROWDB
+  links:
+    - https://github.com/buzzcrow/crowdb
+    - https://crowdb.dev
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+
+sass:
+  style: compressed
+
+exclude:
+  - AGENTS.md
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - Makefile
+  - README.md
+  - vendor
