@@ -1,6 +1,6 @@
-title: CROWDB Journal
+title: CROWDB Blog
 tagline: Notes from inside a distributed storage system
-description: Engineering notes on CROWDB, a distributed storage platform for objects, tables, and AI datasets.
+description: Engineering notes on CROWDB, a distributed storage platform for Iceberg tables, planned datasets, and S3 objects.
 url: "https://buzzcrow.github.io"
 baseurl: ""
 lang: en

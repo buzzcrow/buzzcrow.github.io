@@ -85,8 +85,8 @@ The aim is to leave room for that work without changing what an object or a tabl
 <p>S3 and native Iceberg have working implementations. The first <code>0.1.0-dev</code> release is being prepared for public evaluation. Dataset and direct GPU delivery are still in design. Use disposable data: production use and on-disk upgrade compatibility are not supported.</p>
 </div>
 
-The repository includes the code, design documents, tests, and backlog. That is where I want this argument to be judged. A useful next step is to inspect the single-node Iceberg guide, run the preview once its image tag is available, and tell us which assumption breaks under your workload.
+The repository includes code, tests, and design documents; the product site hosts the user manual. That is where I want this argument to be judged. A useful next step is to inspect the single-node Iceberg guide, run the preview once its image tag is available, and tell us which assumption breaks under your workload.
 
 [Start with the Iceberg evaluation guide →](https://crowdb.dev/docs/quickstart/)
 
-<div class="source-note">Technical references: <a href="https://github.com/buzzcrow/crowdb">project README and status</a>, <a href="https://github.com/buzzcrow/crowdb/blob/main/doc/design/access-server/design-crowdb-access-server.md">Access architecture</a>, and <a href="https://github.com/buzzcrow/crowdb/blob/main/doc/user-manual/docker-single-node-user-guide.md">single-node container guide</a>. This article was first published on September 21 and revised on September 28, 2026 to reflect the current Iceberg implementation and preview limits.</div>
+<div class="source-note">Technical references: <a href="https://github.com/buzzcrow/crowdb">project README and status</a>, <a href="https://github.com/buzzcrow/crowdb/tree/main/doc/design">design documents</a>, and <a href="https://crowdb.dev/docs/quickstart/">Iceberg quick start</a>. This article was first published on September 21 and revised on September 28, 2026 to reflect the current Iceberg implementation and preview limits.</div>

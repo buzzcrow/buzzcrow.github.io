@@ -1,6 +1,6 @@
-# CROWDB Journal
+# CROWDB Blog
 
-A Jekyll engineering journal for Gian Crow and CROWDB. Public copy is English;
+A Jekyll engineering blog for Gian Crow and CROWDB. Public copy is English;
 editorial and design rules live in [AGENTS.md](AGENTS.md).
 
 **Production URL:** https://buzzcrow.github.io  

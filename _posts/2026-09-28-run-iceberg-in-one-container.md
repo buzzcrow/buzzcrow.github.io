@@ -82,7 +82,7 @@ Port 80 serves the Iceberg REST catalog and Iceberg FileIO. This path does not r
 
 The container can also expose general S3 access on port 81, but that is a separate endpoint. Uploading an object there does not register an Iceberg table. Sharing a storage core does not make object and table operations interchangeable.
 
-Do not solve a host-port conflict by changing only the client’s catalog URL. A client must also be able to reach the FileIO URLs it receives. Remote clients, port remapping, and HTTPS need endpoint configuration beyond this local example. The [upstream guide](https://github.com/buzzcrow/crowdb/blob/main/doc/user-manual/docker-single-node-user-guide.md) is the source for those constraints.
+Do not solve a host-port conflict by changing only the client’s catalog URL. A client must also be able to reach the FileIO URLs it receives. Remote clients, port remapping, and HTTPS need endpoint configuration beyond this local example. The [CROWDB user manual](https://crowdb.dev/docs/manual/iceberg/) is the source for those constraints.
 
 ## Know what this deployment cannot tell you
 
@@ -101,10 +101,10 @@ docker stop --time 120 crowdb-iceberg
 docker start crowdb-iceberg
 ```
 
-When the experiment is finished, stop it before removing the container. The named volume remains unless you explicitly delete it. Never attach that volume to two running containers. For a backup, stop the container and follow the upstream instructions for copying the **entire** volume with its ownership and permissions intact.
+When the experiment is finished, stop it before removing the container. The named volume remains unless you explicitly delete it. Never attach that volume to two running containers. For a backup, stop the container and follow the [CROWDB quick start](https://crowdb.dev/docs/quickstart/) when copying the **entire** volume with its ownership and permissions intact.
 
 Once the connection check works, the interesting work begins: test the table operation you actually need, inspect the logs, and record exactly what failed. That gives us more to work with than a broad claim that an engine is “supported.”
 
 [Open the full evaluation guide →](https://crowdb.dev/docs/quickstart/)
 
-<div class="source-note">Commands and deployment limits are adapted from the <a href="https://github.com/buzzcrow/crowdb/blob/main/doc/user-manual/docker-single-node-user-guide.md">CROWDB single-node container guide</a>, checked September 28, 2026. The namespace check above is a documented example, not a claim that it was executed while preparing this article. Check the <a href="https://hub.docker.com/r/crowdb/crowdb-iceberg/tags">public image tags</a> before evaluation.</div>
+<div class="source-note">Commands and deployment limits reflect the CROWDB single-node instructions checked September 28, 2026. See the <a href="https://crowdb.dev/docs/manual/iceberg/">current Iceberg user manual</a>. The namespace check above is a documented example, not a claim that it was executed while preparing this article. Check the <a href="https://hub.docker.com/r/crowdb/crowdb-iceberg/tags">public image tags</a> before evaluation.</div>
