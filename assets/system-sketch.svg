@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 500" role="img" aria-labelledby="hero-title hero-desc">
+<title id="hero-title">Different access models, one CROWDB storage core</title><desc id="hero-desc">S3 and Iceberg connect to shared chunk storage and distributed metadata. Dataset is a planned access model shown with a dashed outline. The stacked planes are a conceptual illustration, not sequential request hops.</desc>
+<defs><pattern id="dots" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" fill="#cbd4bd"/></pattern></defs>
+<rect width="580" height="500" fill="#eef1e7"/><rect x="18" y="18" width="544" height="464" fill="url(#dots)"/>
+<g stroke="#bec9b1" fill="none"><path d="M23 41V23h18M539 23h18v18M23 459v18h18M539 477h18v-18"/><path d="M65 423 287 306 514 419" stroke-dasharray="3 5"/></g>
+<g font-family="Arial, sans-serif"><g transform="translate(40 51)"><rect width="151" height="66" rx="4" fill="#fffefa" stroke="#c3cdb6"/><circle cx="15" cy="17" r="3" fill="#42683e"/><text x="30" y="22" font-size="15" font-weight="600" fill="#2d392b">S3</text><text x="15" y="45" font-size="10" fill="#637159">HTTP objects</text></g>
+<g transform="translate(214 51)"><rect width="151" height="66" rx="4" fill="#fffefa" stroke="#c3cdb6"/><circle cx="15" cy="17" r="3" fill="#42683e"/><text x="30" y="22" font-size="15" font-weight="600" fill="#2d392b">Iceberg</text><text x="15" y="45" font-size="10" fill="#637159">Catalog + FileIO</text></g>
+<g transform="translate(388 51)"><rect width="151" height="66" rx="4" fill="#eef1e7" stroke="#9da98e" stroke-dasharray="4 4"/><circle cx="15" cy="17" r="3" stroke="#71825f" fill="none"/><text x="30" y="22" font-size="15" font-weight="500" fill="#66735d">Dataset</text><text x="15" y="45" font-size="10" fill="#637159">In design</text></g></g>
+<g fill="none" stroke-width="1.2"><path d="M116 117v31h174v36M290 117v67" stroke="#b74324"/><path d="M464 117v31H302v36" stroke="#98a887" stroke-dasharray="4 4"/></g>
+<ellipse cx="294" cy="423" rx="169" ry="28" fill="#dbe2cf" opacity=".45"/>
+<g stroke="#aebd9c" stroke-linejoin="round"><path d="m94 342 198-103 198 103-198 102Z" fill="#dce4d0"/><path d="m94 342 198 102v15L94 357Z" fill="#b8c6a6"/><path d="m292 444 198-102v15L292 459Z" fill="#c8d4b6"/></g>
+<g stroke="#8c9e79" stroke-linejoin="round"><path d="m94 288 198-103 198 103-198 102Z" fill="#e4eadb"/><path d="m94 288 198 102v17L94 305Z" fill="#afbf9b"/><path d="m292 390 198-102v17L292 407Z" fill="#c4d0b3"/></g>
+<g stroke="#35462f" stroke-linejoin="round"><path d="m94 234 198-103 198 103-198 102Z" fill="#34462e"/><path d="m94 234 198 102v19L94 253Z" fill="#263623"/><path d="m292 336 198-102v19L292 355Z" fill="#3e5136"/></g>
+<g stroke="#657758" fill="none"><path d="m145 234 147-77 147 77-147 76Z"/><path d="m194 234 98-51 98 51-98 51Z"/><path d="m243 234 49-25 49 25-49 26Z"/></g>
+<path d="m257 234 35-18 35 18-35 18Z" fill="#d76a3a" stroke="#e99b6d"/><path d="m257 234 35 18v10l-35-18Z" fill="#ac4624"/><path d="m292 252 35-18v10l-35 18Z" fill="#c9552e"/>
+<g stroke="#839671" fill="none"><path d="m116 282-34 20H44"/><path d="m469 341 36 19h33"/></g>
+<g font-family="monospace" font-size="8" fill="#506347"><text x="32" y="318">PROTECTED CHUNKS</text><text x="406" y="376">DISTRIBUTED METADATA</text><text x="30" y="30" font-size="8" letter-spacing="1">CROWDB / SYSTEM SKETCH</text></g>
+</svg>

@@ -1,0 +1,14 @@
+<figure class="architecture-figure" aria-label="CROWDB architecture: access models, chunk layer, and reusable KV">
+  <div class="figure-header"><span>FIG. 01 / THREE LAYERS</span><span class="figure-legend"><span><i></i>implemented</span><span><i class="dashed"></i>planned</span></span></div>
+  <div class="access-cards">
+    <div class="access-card"><b>S3</b><span>HTTP objects</span><span class="tiny-status">IMPLEMENTED</span></div>
+    <div class="access-card"><b>Iceberg</b><span>Catalog + FileIO</span><span class="tiny-status">IMPLEMENTED</span></div>
+    <div class="access-card planned"><b>Dataset</b><span>HTTP + native client</span><span class="tiny-status">IN DESIGN</span></div>
+  </div>
+  <div class="figure-connector" aria-hidden="true">↓</div>
+  <div class="layer-box dark"><div class="layer-title"><span>02</span>Chunk</div><div class="layer-main"><b>One protected storage layer</b><p>Chunk Stream · Chunk-KV<br>Placement, bounded streaming, protection and repair</p><div class="path-line">chunk client → Chunk I/O → ChunkDB → DiskIO → DiskDB</div></div></div>
+  <div class="figure-connector" aria-hidden="true">↕</div>
+  <div class="layer-box"><div class="layer-title"><span>01</span>Reusable KV</div><div class="layer-main"><b>Replicated metadata and durable state</b><p>crowdb-kv · Multi-Paxos · WAL · crowdb-tree · RPC</p></div></div>
+  <div class="planned-path"><strong>PLANNED PATH</strong> &nbsp; DiskIO buffers → RDMA / GDS → GPU memory. This is a design direction, not a capability of the preview.</div>
+  <figcaption>The KV layer supplies distributed state; the diagram does not imply that every payload is stored in KV. S3 and Iceberg use the shared core without translating through one another. Physical reclamation is disabled in the current single-node container profile.</figcaption>
+</figure>
