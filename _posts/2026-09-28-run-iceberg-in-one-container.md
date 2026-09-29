@@ -1,68 +1,67 @@
 ---
-title: "One container to inspect the Iceberg path"
-subtitle: "A local catalog, its storage, and a small first check. What the CROWDB preview is for—and what it does not prove."
+title: "Run Iceberg in one container, then query it with pandas"
+subtitle: "Create a tiny orders table, write it to Iceberg, and find which city earned the most."
 date: 2026-09-28 10:30:00 +0800
+last_modified_at: 2026-09-30 00:30:00 +0800
 category: Guides
-tags: [Iceberg, Docker, Getting started]
-description: "Evaluate the CROWDB Iceberg container on Linux amd64, verify startup, retrieve private credentials, and understand the preview’s limits."
-excerpt: "Start with a small question: can the catalog and the storage work together without another service to configure?"
+tags: [Iceberg, Docker, PyIceberg, pandas, Getting started]
+description: "Start CROWDB in Docker, upload six orders through PyIceberg, and summarize paid revenue by city with pandas."
+excerpt: "One container, six orders, and a useful answer from data read back from Iceberg."
 art: iceberg
 image: /assets/og-iceberg.png
 figure_title: "Catalog + storage."
-figure_caption: "Start locally. Check the boundary. Development preview, not production."
+figure_caption: "Write data, read it back, ask a question."
 ---
-For a first evaluation, I want the setup to be smaller than the question we are trying to answer. A catalog URL is not much use if the reader first has to assemble a separate storage stack, find credentials, and work out which port serves the files.
+<!-- Publish this revision together with the rebuilt image. The originally published 0.1.0 image does not yet support the append path below. -->
 
-The CROWDB Iceberg container puts the REST catalog and its storage in one local deployment. The first check is deliberately modest: start it, confirm that the services are healthy, and create a namespace from a client. That establishes a connection. It is not a performance test or evidence of production readiness.
+What does an Iceberg catalog help you do? Let's answer a small question: **which city brought in the most paid sales?** We will upload six fictional orders to CROWDB, read them back, and use pandas to calculate the answer.
 
-## Before starting
+The published Linux amd64 `0.1.0` image is about 91.6 MiB compressed. Use disposable data for this evaluation release.
 
-The preview targets **Linux amd64**. Use a machine with Docker and disposable data. These examples use host port 80 on loopback. Check that the port is free; do not run the example on the same host port as your website’s Nginx server.
-
-<div class="callout"><strong>Image publication is separate from the guide</strong><p>The repository names <code>crowdb/crowdb-iceberg:v0.1.0-dev</code> as the evaluation image. Confirm that this tag is available on Docker Hub before running the commands. A written quick start is not evidence that an image has finished publishing.</p></div>
-
-## Start the catalog and storage
-
-Use a named volume so that recreating the container does not silently leave you with a different anonymous volume:
+## 1. Start the container
 
 ```sh
-docker run -d --name crowdb-iceberg \
-  -p 127.0.0.1:80:80 \
-  -v crowdb-data:/opt/crowdb/data \
-  --stop-timeout 120 \
-  crowdb/crowdb-iceberg:v0.1.0-dev
+docker run -d --name crowdb-iceberg -p 127.0.0.1:80:80 crowdb/crowdb-iceberg:0.1.0
 ```
 
-The loopback binding is intentional. This is a local HTTP evaluation, not an instruction to expose an unfinished storage service to the internet.
+Port 80 lets Python on your machine reach the Iceberg catalog and its file service. There is no separate storage service to start for this example.
 
-Check the startup status:
+## 2. Connect Python
 
-```sh
-docker inspect --format '{% raw %}{{.State.Health.Status}}{% endraw %}' crowdb-iceberg
-```
-
-Wait for `healthy`. While the state is `starting`, initialization or recovery may still be running. If it becomes `unhealthy` or the process exits, inspect the logs instead of repeatedly deleting the container:
-
-```sh
-docker logs --tail 100 crowdb-iceberg
-docker exec crowdb-iceberg crowdb-monitor readiness
-```
-
-## Retrieve credentials, then connect
-
-Get the generated client configuration:
+Get your container's private connection values:
 
 ```sh
 docker exec crowdb-iceberg crowdb-monitor credentials show --format env
+python3 -m venv .venv
+. .venv/bin/activate
+pip install 'pyiceberg[pyarrow]==0.11.1' pandas
 ```
 
-The output includes `ICEBERG_URI` and `ICEBERG_TOKEN`. Keep it private. Set those two variables in your client environment using the values printed by your own container; there is no shared demo token.
+Set `ICEBERG_URI` and `ICEBERG_TOKEN` in that shell from the command's output. Keep the token private.
 
-With PyIceberg installed, this is a small connection check:
+## 3. Upload orders and ask a question
+
+Save this as `orders.py` and run `python orders.py`:
 
 ```python
 import os
+
+import pandas as pd
+import pyarrow as pa
 from pyiceberg.catalog import load_catalog
+
+orders = pd.DataFrame(
+    [
+        (1, "Beijing", "paid", 120),
+        (2, "Shanghai", "paid", 80),
+        (3, "Beijing", "cancelled", 200),
+        (4, "Shanghai", "paid", 60),
+        (5, "Shenzhen", "paid", 50),
+        (6, "Beijing", "paid", 30),
+    ],
+    columns=["order_id", "city", "status", "amount_usd"],
+)
+arrow_orders = pa.Table.from_pandas(orders, preserve_index=False)
 
 catalog = load_catalog(
     "crowdb",
@@ -70,41 +69,27 @@ catalog = load_catalog(
     uri=os.environ["ICEBERG_URI"],
     token=os.environ["ICEBERG_TOKEN"],
 )
-catalog.create_namespace_if_not_exists("demo")
-print(catalog.list_namespaces())
+catalog.create_namespace_if_not_exists("pandas_demo")
+table = catalog.create_table("pandas_demo.orders", schema=arrow_orders.schema)
+table.append(arrow_orders)
+
+saved_orders = catalog.load_table("pandas_demo.orders").scan().to_pandas()
+result = (
+    saved_orders[saved_orders["status"] == "paid"]
+    .groupby("city", as_index=False)
+    .agg(orders=("order_id", "count"), revenue_usd=("amount_usd", "sum"))
+    .sort_values("revenue_usd", ascending=False)
+)
+print(result.to_string(index=False))
 ```
 
-Look for the `demo` namespace in the returned list. This checks catalog access and namespace creation. It does **not** verify file reads, table commits, query-engine compatibility, or throughput.
-
-## One port is not one data model
-
-Port 80 serves the Iceberg REST catalog and Iceberg FileIO. This path does not require a separate S3 port. That is the part of the architecture the container makes convenient to inspect.
-
-The container can also expose general S3 access on port 81, but that is a separate endpoint. Uploading an object there does not register an Iceberg table. Sharing a storage core does not make object and table operations interchangeable.
-
-Do not solve a host-port conflict by changing only the client’s catalog URL. A client must also be able to reach the FileIO URLs it receives. Remote clients, port remapping, and HTTPS need endpoint configuration beyond this local example. The [CROWDB user manual](https://crowdb.dev/docs/manual/iceberg/) is the source for those constraints.
-
-## Know what this deployment cannot tell you
-
-Everything runs on one host, so this deployment has no host fault tolerance. The configured sparse disk images are not a promise of usable capacity. Watch real filesystem space.
-
-Physical reclamation is disabled in this profile: deleting Iceberg content can leave space occupied. Reusing a named volume is also not an upgrade strategy. Cross-version data migration is not promised; keep the exact image version with data you intend to reopen.
-
-The repository reports container acceptance coverage for PyIceberg namespace/table operations and boto3 object operations. It does not certify Spark, Flink, Trino, dataframe workflows, or every file-format case through those checks. A familiar client name should not become an unsupported compatibility claim.
-
-## Stop without throwing away the experiment
-
-To stop and resume the same container:
-
-```sh
-docker stop --time 120 crowdb-iceberg
-docker start crowdb-iceberg
+```text
+    city  orders  revenue_usd
+ Beijing       2          150
+Shanghai       2          140
+Shenzhen       1           50
 ```
 
-When the experiment is finished, stop it before removing the container. The named volume remains unless you explicitly delete it. Never attach that volume to two running containers. For a backup, stop the container and follow the [CROWDB quick start](https://crowdb.dev/docs/quickstart/) when copying the **entire** volume with its ownership and permissions intact.
+Beijing leads by $10. The cancelled order does not count. The query uses `saved_orders`, which came from an Iceberg scan after the upload, so the result is based on stored data rather than the original in-memory DataFrame.
 
-Once the connection check works, the interesting work begins: test the table operation you actually need, inspect the logs, and record exactly what failed. That gives us more to work with than a broad claim that an engine is “supported.”
-
-[Open the full evaluation guide →](https://crowdb.dev/docs/quickstart/)
-
-<div class="source-note">Commands and deployment limits reflect the CROWDB single-node instructions checked September 28, 2026. See the <a href="https://crowdb.dev/docs/manual/iceberg/">current Iceberg user manual</a>. The namespace check above is a documented example, not a claim that it was executed while preparing this article. Check the <a href="https://hub.docker.com/r/crowdb/crowdb-iceberg/tags">public image tags</a> before evaluation.</div>
+That's the basic loop: create a table, write data, and read it back with a familiar Python tool. For configuration and other client integrations, see the [quick start](https://crowdb.dev/docs/quickstart/) and [Iceberg manual](https://crowdb.dev/docs/manual/iceberg/).

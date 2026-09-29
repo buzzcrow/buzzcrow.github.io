@@ -2,7 +2,7 @@
 title: "Why we’re building CROWDB"
 subtitle: "Objects and tables, built on one storage core. The reasoning behind owning the path from an API to the bytes on disk."
 date: 2026-09-21 10:30:00 +0800
-last_modified_at: 2026-09-28 12:00:00 +0800
+last_modified_at: 2026-09-29 10:00:00 +0800
 category: Product
 tags: [Architecture, S3, Iceberg, Data path]
 description: "Why CROWDB gives S3 and Iceberg native access to a shared storage core, and what that choice means for future Dataset and GPU paths."
@@ -32,7 +32,7 @@ An S3 client works with objects. An Iceberg client works with a catalog, tables,
 
 This distinction is easy to lose in a diagram. “Shared storage” does **not** mean that uploading an S3 object registers an Iceberg table. The access models still have separate semantics. What they share is the infrastructure underneath.
 
-The first useful question is therefore practical: can a table client talk to the catalog and store its data without another storage service to configure? The single-node Iceberg container is our current evaluation path for that question. It runs the catalog and its storage together. It is a development preview, not a production deployment.
+The first useful question is therefore practical: can a table client talk to the catalog and store its data without another storage service to configure? The native Iceberg path is designed to make that possible. The answer still needs to be tested against each client workflow.
 
 ## Why build the whole path?
 
@@ -56,13 +56,13 @@ The architecture has three layers. Reading from the application downward helps e
 
 The Access layer implements the interfaces applications use. S3 handles HTTP object operations. Iceberg supplies a native catalog and FileIO path. Both have working implementations in the current repository. Dataset remains in design, including the possibility of native access that does not pass through an HTTP server.
 
-The current Iceberg container exposes its catalog and FileIO on the same port. A separate, optional S3 endpoint is available for object access. Keeping those roles clear is more useful than calling every path “compatible.”
+The Iceberg catalog and FileIO belong to one access model. General S3 object access is a separate model. Keeping those roles clear is more useful than calling every path “compatible.”
 
 ### Chunks own the storage work
 
 The Chunk layer is responsible for placement, protection, streaming, and repair. Chunk Stream provides durable ordered append; Chunk-KV provides a range-partitioned structure. The underlying path continues through Chunk I/O, ChunkDB, DiskIO, and DiskDB.
 
-These names will need their own articles. For this introduction, the important point is ownership: access models can reuse the same storage mechanisms rather than grow their own placement and recovery systems. Individual deployment profiles still have limits. Physical reclamation, for example, is disabled in the current single-node container.
+These names will need their own articles. For this introduction, the important point is ownership: access models can reuse the same storage mechanisms rather than grow their own placement and recovery systems.
 
 ### Distributed state is a reusable foundation
 
@@ -81,12 +81,12 @@ The aim is to leave room for that work without changing what an object or a tabl
 ## Where the project stands
 
 <div class="callout">
-<strong>Development status · updated September 28, 2026</strong>
-<p>S3 and native Iceberg have working implementations. The first <code>0.1.0-dev</code> release is being prepared for public evaluation. Dataset and direct GPU delivery are still in design. Use disposable data: production use and on-disk upgrade compatibility are not supported.</p>
+<strong>Development status · updated September 29, 2026</strong>
+<p>S3 and native Iceberg have working implementations. Dataset and direct GPU delivery are still in design. Production use and on-disk upgrade compatibility are not supported.</p>
 </div>
 
-The repository includes code, tests, and design documents; the product site hosts the user manual. That is where I want this argument to be judged. A useful next step is to inspect the single-node Iceberg guide, run the preview once its image tag is available, and tell us which assumption breaks under your workload.
+The repository includes code, tests, and design documents; the product site hosts the user manual. That is where I want this argument to be judged. A useful next step is to inspect the Iceberg guide and tell us which assumption breaks under your workload.
 
 [Start with the Iceberg evaluation guide →](https://crowdb.dev/docs/quickstart/)
 
-<div class="source-note">Technical references: <a href="https://github.com/buzzcrow/crowdb">project README and status</a>, <a href="https://github.com/buzzcrow/crowdb/tree/main/doc/design">design documents</a>, and <a href="https://crowdb.dev/docs/quickstart/">Iceberg quick start</a>. This article was first published on September 21 and revised on September 28, 2026 to reflect the current Iceberg implementation and preview limits.</div>
+<div class="source-note">Technical references: <a href="https://github.com/buzzcrow/crowdb">project README and status</a>, <a href="https://github.com/buzzcrow/crowdb/tree/main/doc/design">design documents</a>, and <a href="https://crowdb.dev/docs/quickstart/">Iceberg quick start</a>. This article was first published on September 21 and revised on September 29, 2026 to reflect the current Iceberg implementation and development limits.</div>

@@ -10,5 +10,5 @@
   <div class="figure-connector" aria-hidden="true">↕</div>
   <div class="layer-box"><div class="layer-title"><span>01</span>Reusable KV</div><div class="layer-main"><b>Replicated metadata and durable state</b><p>crowdb-kv · Multi-Paxos · WAL · crowdb-tree · RPC</p></div></div>
   <div class="planned-path"><strong>PLANNED PATH</strong> &nbsp; DiskIO buffers → RDMA / GDS → GPU memory. This is a design direction, not a capability of the preview.</div>
-  <figcaption>The KV layer supplies distributed state; the diagram does not imply that every payload is stored in KV. S3 and Iceberg use the shared core without translating through one another. Physical reclamation is disabled in the current single-node container profile.</figcaption>
+  <figcaption>The KV layer supplies distributed state; the diagram does not imply that every payload is stored in KV. S3 and Iceberg use the shared core without translating through one another.</figcaption>
 </figure>
