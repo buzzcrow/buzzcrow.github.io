@@ -1,116 +1,94 @@
 ---
-title: "Load TPC-H and TPC-DS tables into CROWDB Iceberg"
-subtitle: "A small, reproducible path from standard generators to remote Parquet and an Iceberg read."
+title: "Load TPC-H into CROWDB Iceberg and query it with DuckDB"
+subtitle: "One container, one data load, and a first SQL workload."
 date: 2026-09-30 23:20:00 +0800
-last_modified_at: 2026-10-01 02:01:00 +0800
+last_modified_at: 2026-10-01 20:00:00 +0800
 category: Guides
-tags: [Iceberg, TPC-H, TPC-DS, Parquet, Docker]
-description: "Use crowdb-tpc-loader to generate TPC-H and TPC-DS, register the Parquet files in a CROWDB Iceberg container, and read them with PyIceberg."
-excerpt: "Load 8 TPC-H or 24 TPC-DS tables with one command, then select rows from a fresh Python client."
+tags: [Iceberg, TPC-H, DuckDB, Docker]
+description: "Start the published CROWDB Iceberg container, load TPC-H tables, then query them through DuckDB."
+excerpt: "From a published container to TPC-H tables and a DuckDB query, with the benchmark boundary made explicit."
 image: /assets/og-iceberg.png
 ---
 
-I wanted a repeatable way to put recognizable data into the CROWDB Iceberg container before trying SQL engines. Hand-writing a sample table proves little about multi-table imports. [crowdb-tpc-loader](https://github.com/buzzcrow/crowdb-tpc-loader) now generates TPC-H and TPC-DS Parquet, checks every table, uploads the files, and registers them through the Iceberg REST Catalog. This guide uses scale factor 0.01 to exercise that path. It does not run the benchmark queries or claim TPC certification.
+I wanted to move beyond a hand-written table and see whether a SQL client could read a complete, familiar dataset from CROWDB. The path is short: start the [published Iceberg image](https://hub.docker.com/r/crowdb/crowdb-iceberg/tags), inject TPC-H tables with [crowdb-tpc-loader](https://github.com/buzzcrow/crowdb-tpc-loader), then query them through DuckDB. This is an evaluation on one Linux amd64 host with disposable data, not a TPC result.
 
-## Start a local container
-
-These commands use a Linux amd64 development checkout of [CROWDB](https://github.com/buzzcrow/crowdb) at version 0.2.0. The image below is **built locally from source**; the test does not establish that a `0.2.0` Docker Hub tag has been published. The single-node profile has one copy and no node-failure protection, so use disposable data.
+## Start the container
 
 ```sh
-cd /path/to/crowdb
-pixi run build-single-node-container
 docker run -d --name crowdb-tpc-demo \
   -p 127.0.0.1:80:80 \
   -v crowdb-tpc-demo-data:/opt/crowdb/data \
-  crowdb-iceberg-single-node:dev
+  crowdb/crowdb-iceberg:latest
 ```
 
-Wait until `docker inspect crowdb-tpc-demo --format '{{.State.Health.Status}}'` says `healthy`. Port 80 carries the REST Catalog and native Iceberg file endpoint. Get the local client credentials without copying the token into a command line:
+Wait until `docker inspect --format '{{.State.Health.Status}}' crowdb-tpc-demo` reports `healthy`. Save the generated connection values in a private file and load them into the current shell:
 
 ```sh
 umask 077
-docker exec crowdb-tpc-demo crowdb-monitor credentials show --format env > /tmp/crowdb-tpc-demo.env
+docker exec crowdb-tpc-demo crowdb-monitor credentials show --format env > ./crowdb-demo.env
 set -a
-. /tmp/crowdb-tpc-demo.env
+. ./crowdb-demo.env
 set +a
 ```
 
-Keep that file private and remove it when finished. Use a different host port or adjust `ICEBERG_URI` if port 80 is occupied.
+The `latest` tag can move, so record the image digest if you need to repeat the run exactly.
 
-## Load both datasets
+## Inject TPC-H data
 
-From a checkout of `crowdb-tpc-loader`:
+Install the published [crowdb-tpc-loader package](https://pypi.org/project/crowdb-tpc-loader/) (source: [buzzcrow/crowdb-tpc-loader](https://github.com/buzzcrow/crowdb-tpc-loader)), then load a fresh namespace:
 
 ```sh
-cd /path/to/crowdb-tpc-loader
 python3 -m venv .venv
 . .venv/bin/activate
-python -m pip install --only-binary=:all: -e .
-
+python -m pip install crowdb-tpc-loader
 crowdb-tpc-loader load --benchmark tpch --sf 0.01 \
   --namespace tpch_demo --report-file ./tpch-demo.json
-crowdb-tpc-loader load --benchmark tpcds --sf 0.01 \
-  --namespace tpcds_demo --report-file ./tpcds-demo.json
 ```
 
-The commands need a fresh namespace. TPC-H uses the `tpchgen-cli` 3.0.0 binary; TPC-DS uses DuckDB 1.5's official `tpcds` extension. The first run may download these generator components. The loader validates the full generated dataset before creating a benchmark table, then uploads each Parquet file and registers it with Iceberg. CROWDB checks the upload's signed payload or supplied checksum before accepting it; the loader does not download the object for another checksum pass. The loader uploads up to 24 files concurrently by default, then commits one snapshot per table in order. It deletes local staging on success; the JSON reports retain remote file locations, counts, and snapshot IDs. An existing table stops a default load, so choose a new namespace when repeating the experiment.
+This creates eight Iceberg tables. The loader generates and checks Parquet locally, uploads it to the container, and registers the files in the catalog. It does not run TPC-H SQL queries. With the published image, my SF 0.01 run committed all 8 tables and the independent verifier checked 86,805 manifest/footer rows. The loader writes different tables concurrently with 8 workers by default; use `--upload-workers` to adjust that limit. The [loader guide](https://crowdb.dev/docs/tpc-loader/) covers prerequisites, reports, failure recovery, and TPC-DS loading.
 
-In my local SF 0.01 run, TPC-H produced **8 tables, 86,805 rows, and 3.23 MB across 8 Parquet files**. TPC-DS produced **24 tables, 277,976 rows, and 3.86 MB across 24 Parquet files**. There was one file per table in this small run, but the loader accepts multiple shards. TPC-H `region` was 1,227 bytes while `lineitem` was 1,924,571 bytes; TPC-DS `call_center` was 4,917 bytes while `store_sales` was 985,882 bytes. These are compressed Parquet sizes, not in-memory table sizes.
+## Query with DuckDB
 
-## Select rows in Python
-
-Run this in a fresh process after the loader has removed its local files. The file adapter handles exact-object requests on CROWDB's native Iceberg endpoint:
-
-```python
-import os
-from pyiceberg.catalog import load_catalog
-
-catalog = load_catalog(
-    "crowdb", type="rest",
-    uri=os.environ["ICEBERG_URI"], token=os.environ["ICEBERG_TOKEN"],
-    **{"py-io-impl": "crowdb_tpc_loader.crowdb_fileio.CrowdbFileIO"},
-)
-
-region = catalog.load_table("tpch_demo.region")
-print(region.scan(
-    row_filter="r_regionkey == 1",
-    selected_fields=("r_regionkey", "r_name"),
-).to_arrow().to_pylist())
-
-item = catalog.load_table("tpcds_demo.item")
-print(item.scan(
-    selected_fields=("i_item_sk", "i_item_id"), limit=5,
-).to_arrow().to_pylist())
-```
-
-The first selection returned `{'r_regionkey': 1, 'r_name': 'AMERICA'}` in my run. The second returned five `item` rows. For a read-only check of every imported table, including remote Parquet footers and an Iceberg sample scan, run `python scripts/verify_crowdb.py ./tpch-demo.json --require-complete --iceberg-scan` and the same command with `tpcds-demo.json`.
-
-## Query from DuckDB
-
-I also tested the locally built DuckDB 1.5.6 CLI with its `iceberg` extension against the CROWDB REST Catalog. With the same credential environment loaded, this selected `AMERICA` from the imported `region` table:
+I used a locally built DuckDB 1.5.6 CLI at `/pp/duckdb/build/release/duckdb`. Replace that path with your DuckDB executable. With the credential environment still loaded:
 
 ```sh
-/path/to/duckdb/build/release/duckdb <<SQL
+/pp/duckdb/build/release/duckdb <<SQL
 INSTALL iceberg;
 LOAD iceberg;
 INSTALL httpfs;
 LOAD httpfs;
 CREATE SECRET crowdb_catalog (TYPE ICEBERG, TOKEN '$ICEBERG_TOKEN');
 ATTACH '' AS crowdb (TYPE ICEBERG, SECRET crowdb_catalog, ENDPOINT '$ICEBERG_URI');
-SELECT r_regionkey, r_name FROM crowdb.tpch_demo.region WHERE r_regionkey = 1;
+SELECT r_regionkey, r_name
+FROM crowdb.tpch_demo.region
+WHERE r_regionkey = 1;
 SQL
 ```
 
-The empty `ATTACH` warehouse selector matters: this CROWDB profile has no named warehouse. DuckDB must use the object credentials supplied by the catalog for this Iceberg table. A separate fixed S3 credential from the monitor could attach the catalog but got HTTP 403 when reading the table's manifest. I also queried the larger TPC-H SF 10 `lineitem` file and the newly loaded TPC-DS SF 10 `item` table; the latter returned `(1, 'AAAAAAAABAAAAAAA')` for `i_item_sk, i_item_id`. These are spot queries through the REST Catalog and file endpoint, not TPC query coverage or performance results.
+The empty warehouse selector in `ATTACH ''` is required for this CROWDB profile. The published-image run returned `AMERICA`. That confirms one read through the REST catalog and file endpoint; it does not exercise the TPC-H query set.
 
-CROWDB's Iceberg file paths look like S3 paths, but they are native Iceberg objects with table-scoped authority. [PyIceberg's default PyArrow FileIO](https://py.iceberg.apache.org/reference/pyiceberg/io/pyarrow/) calls `get_file_info` for an exact file; in this run that led to `ListObjectsV2` and failed. The loader's small FileIO adapter uses an exact-object request for existence and size. [Iceberg's FileIO guide](https://iceberg.apache.org/docs/latest/fileio/) describes read, write, and seek as essential file operations. General prefix listing and the meaning of the S3 bucket field remain separate design work; this import does not require either.
+## Try TPC-H Q1
 
-## What the small run measured
+Q1 scans and aggregates `lineitem`. Open DuckDB again, repeat the extension and `ATTACH` statements above, enable `.timer on`, then run the [standard Q1](https://github.com/duckdb/duckdb/blob/main/extension/tpch/dbgen/queries/q01.sql) against the imported table:
 
-I ran one single-node container on a Linux x86_64 host with an Intel Core i9-7960X, 32 logical CPUs, and 62 GiB RAM. The generator used two threads and a 1 GB DuckDB memory limit; Python 3.12.3, PyArrow 23.0.1, and PyIceberg 0.10.0 were installed. There was no performance baseline or concurrent client load. The clean TPC-H import took 29.81 seconds wall time; TPC-DS took 75.83 seconds. A separate client then verified all 32 tables after local staging was gone, including full reads and SHA-256 checks.
+```sql
+SELECT l_returnflag, l_linestatus,
+       sum(l_quantity) AS sum_qty,
+       sum(l_extendedprice) AS sum_base_price,
+       sum(l_extendedprice * (1 - l_discount)) AS sum_disc_price,
+       sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) AS sum_charge,
+       avg(l_quantity) AS avg_qty,
+       avg(l_extendedprice) AS avg_price,
+       avg(l_discount) AS avg_disc,
+       count(*) AS count_order
+FROM crowdb.tpch_demo.lineitem
+WHERE l_shipdate <= DATE '1998-09-02'
+GROUP BY l_returnflag, l_linestatus
+ORDER BY l_returnflag, l_linestatus;
+```
 
-The files are tiny, yet each table's create, upload, and register step took a median 3.33 seconds for TPC-H and 2.85 seconds for TPC-DS. Those steps account for most elapsed time. This shows a significant per-table fixed cost in this setup; the run does not identify which internal metadata call dominates.
+Start with SF 0.01 to check correctness and compatibility. For a meaningful timed run, load a stated scale factor, run the standard query set, record the image digest, DuckDB build, hardware, cache state, concurrency, and results, then compare with a stated baseline.
 
-I then ran the concurrent loader on larger datasets. TPC-H SF 1 loaded 8.66 million rows in 50 seconds; TPC-H SF 10 loaded 86.59 million rows and 3.64 GB of compressed Parquet in 232 seconds. TPC-DS SF 1 loaded 19.56 million rows in 157 seconds; TPC-DS SF 10 loaded 191.50 million rows and 2.77 GB of compressed Parquet across 24 tables in 453 seconds. Each successful run passed independent manifest, footer, and sample Iceberg scan verification. These are single-node wall times, including generation and table registration, not a benchmark result. TPC-H SF 10's upload phase took about 176 seconds for 3.64 GB, roughly 20.7 MB/s; its streaming/write path needs profiling. A distributed deployment and standard SQL benchmark queries still need separate tests.
+In the published-image SF 0.01 run, Q1 returned four groups with `count_order` values 14,876, 348, 29,181, and 14,902. The local DuckDB CLI reported 0.075 seconds for that single execution. It is a small integration check without a baseline, cache control, or repeated trials; we have not run the full TPC-H suite or measured a TPC score.
 
-The local Docker volume keeps the Iceberg data when the container stops. To end the example, run `docker rm -f crowdb-tpc-demo` and remove `/tmp/crowdb-tpc-demo.env`. Remove the `crowdb-tpc-demo-data` volume only when you deliberately want to discard the imported tables.
+The named volume keeps data after the container stops. Remove the container with `docker rm -f crowdb-tpc-demo` when finished; delete `./crowdb-demo.env` securely. Remove the volume only when you intend to discard the tables.

@@ -2,7 +2,7 @@
 title: "Use crowdb-iceberg container with pandas"
 subtitle: "Start the container, write an Iceberg table, and query its data in pandas."
 date: 2026-09-28 10:30:00 +0800
-last_modified_at: 2026-09-30 00:30:00 +0800
+last_modified_at: 2026-10-01 20:00:00 +0800
 category: Guides
 tags: [Iceberg, Docker, PyIceberg, pandas, Getting started]
 description: "Start the CROWDB Iceberg container, connect with PyIceberg, write a table, and query its data with pandas."
@@ -12,16 +12,14 @@ image: /assets/og-iceberg.png
 figure_title: "Catalog + storage."
 figure_caption: "Write an Iceberg table and read it into pandas."
 ---
-<!-- Publish this revision together with the rebuilt image. The originally published 0.1.0 image does not yet support the append path below. -->
-
 CROWDB's `crowdb-iceberg` container runs an Iceberg REST catalog and its file storage together. This example creates a table of six sample orders, writes the rows through PyIceberg, then reads the stored table into pandas.
 
-Use disposable data with this `0.1.0` evaluation release. The commands below assume a Linux amd64 host and a free local port 80.
+Use disposable data with the `latest` evaluation image. The commands below assume a Linux amd64 host and a free local port 80.
 
 ## 1. Start the container
 
 ```sh
-docker run -d --name crowdb-iceberg -p 127.0.0.1:80:80 crowdb/crowdb-iceberg:0.1.0
+docker run -d --name crowdb-iceberg -p 127.0.0.1:80:80 crowdb/crowdb-iceberg:latest
 ```
 
 The port mapping lets Python on your machine reach the catalog and file service.
