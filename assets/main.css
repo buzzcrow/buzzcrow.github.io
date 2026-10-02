@@ -185,6 +185,10 @@ p {
   border-bottom:1px solid var(--line);
   backdrop-filter:blur(12px)
 }
+.site-header,.site-footer {
+  font-size:16px;
+  line-height:1.65
+}
 .header-inner {
   height:100%;
   display:flex;
@@ -199,13 +203,16 @@ p {
   flex:none
 }
 .brand-mark {
-  width:29px;
-  height:31px
+  width:30px;
+  height:30px
 }
 .brand-name {
   font-weight:750;
   font-size:17px;
   letter-spacing:.055em
+}
+.brand-accent {
+  color:var(--accent)
 }
 .brand-section {
   font-size:14px;
@@ -2067,8 +2074,8 @@ p {
     font-size:16px
   }
   .brand-mark {
-    width:25px;
-    height:28px
+    width:26px;
+    height:26px
   }
   .brand-section {
     font-size:12px
@@ -2707,8 +2714,6 @@ p {
 }
 /* Journal reading scale. Keep compact metadata below the 18px text scale. */
 @media screen {
-  body.journal .primary-nav { font-size:16px }
-  body.journal .brand-section { font-size:16px }
   body.journal .eyebrow,body.journal .tag { font-size:12px }
   body.journal .meta { font-size:12px }
   body.journal .author-small { font-size:14px }
@@ -2717,11 +2722,8 @@ p {
   body.journal .toc nav,body.journal .toc-mobile nav { font-size:13px }
   body.journal .reading-controls label { font-size:12px }
   body.journal .font-controls button { font-size:13px }
-  body.journal .footer-description,body.journal .footer-links div { font-size:14px }
-  body.journal .footer-bottom { font-size:12px }
 }
 @media screen and (max-width:860px) {
-  body.journal .primary-nav { font-size:15px }
   body.journal .journal-feature .excerpt { font-size:17px }
 }
 @media screen and (max-width:600px) {
