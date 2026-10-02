@@ -1,48 +1,50 @@
 ---
-title: "Use crowdb-iceberg container with pandas"
-subtitle: "Start the container, write an Iceberg table, and query its data in pandas."
+title: "Write an Iceberg table with CROWDB and pandas"
+subtitle: "Start one container, save six orders, and check the result in pandas."
 date: 2026-09-28 10:30:00 +0800
-last_modified_at: 2026-10-01 20:00:00 +0800
+last_modified_at: 2026-10-02 10:00:00 +0800
 category: Guides
 tags: [Iceberg, Docker, PyIceberg, pandas, Getting started]
-description: "Start the CROWDB Iceberg container, connect with PyIceberg, write a table, and query its data with pandas."
-excerpt: "A short, runnable path from a Docker container to an Iceberg table and a pandas query."
+description: "Start CROWDB Iceberg, write six orders with PyIceberg, and check the saved data in pandas."
+excerpt: "Start one container, write six orders to an Iceberg table, and see the pandas result."
 art: iceberg
 image: /assets/og-iceberg.png
 figure_title: "Catalog + storage."
 figure_caption: "Write an Iceberg table and read it into pandas."
 ---
-CROWDB's `crowdb-iceberg` container runs an Iceberg REST catalog and its file storage together. This example creates a table of six sample orders, writes the rows through PyIceberg, then reads the stored table into pandas.
+CROWDB's `crowdb-iceberg` container runs an Iceberg catalog and table storage together. You will write six orders to a table, read them back, and total the paid orders by city.
 
-Use disposable data with the `latest` evaluation image. The commands below assume a Linux amd64 host and a free local port 80.
+Use a Linux amd64 host with Docker and Python 3.10–3.12. Use disposable data with this evaluation image, and make sure local port 80 is free.
 
 ## 1. Start the container
 
 ```sh
 docker run -d --name crowdb-iceberg -p 127.0.0.1:80:80 crowdb/crowdb-iceberg:latest
+docker exec crowdb-iceberg crowdb-monitor readiness && echo ready
 ```
 
-The port mapping lets Python on your machine reach the catalog and file service.
+Rerun the second command until it prints `ready`. The port mapping keeps the catalog and file service on your machine.
 
-## 2. Set up the connection
+## 2. Get credentials and install the client
 
-Install the Python clients and print the connection values from your container:
+The container generates its own connection values. Save them in a private file, then load them into your shell:
 
 ```sh
+umask 077
+docker exec crowdb-iceberg crowdb-monitor credentials show --format env > ./crowdb-iceberg.env
+set -a
+. ./crowdb-iceberg.env
+set +a
 python3 -m venv .venv
 . .venv/bin/activate
-pip install 'pyiceberg[pyarrow]==0.11.1' pandas
-docker exec crowdb-iceberg crowdb-monitor credentials show --format env
+python -m pip install 'pyiceberg[pyarrow]==0.11.1' pandas
 ```
 
-Export the two Iceberg values in the same shell, replacing the examples below with the values printed by your container. Keep the token private.
+The file contains `ICEBERG_URI` and `ICEBERG_TOKEN`. Keep it private. The commands below use the values from your container.
 
-```sh
-export ICEBERG_URI='http://localhost'
-export ICEBERG_TOKEN='<your container token>'
-```
+## 3. Write six orders and read them back
 
-Start an `orders.py` file with the connection:
+Copy this complete script into `orders.py`:
 
 ```python
 import os
@@ -57,13 +59,7 @@ catalog = load_catalog(
     uri=os.environ["ICEBERG_URI"],
     token=os.environ["ICEBERG_TOKEN"],
 )
-```
 
-## 3. Write a table and its data
-
-Add this block to `orders.py`. The sample rows are created locally; `table.append` writes them to the container's Iceberg storage.
-
-```python
 orders = pd.DataFrame(
     [
         (1, "Beijing", "paid", 120),
@@ -80,15 +76,7 @@ arrow_orders = pa.Table.from_pandas(orders, preserve_index=False)
 catalog.create_namespace_if_not_exists("pandas_demo")
 table = catalog.create_table("pandas_demo.orders", schema=arrow_orders.schema)
 table.append(arrow_orders)
-```
 
-This creates a new `pandas_demo.orders` table. Use a different table name if you run the script again.
-
-## 4. Query the stored table with pandas
-
-Add the final block to `orders.py`, then run `python orders.py`:
-
-```python
 saved_orders = catalog.load_table("pandas_demo.orders").scan().to_pandas()
 result = (
     saved_orders[saved_orders["status"] == "paid"]
@@ -99,11 +87,13 @@ result = (
 print(result.to_string(index=False))
 ```
 
+Run it once:
+
 ```sh
 python orders.py
 ```
 
-The query counts paid orders and sums their revenue for each city:
+The fresh Iceberg scan reads the rows saved in the container. One order is cancelled, so the five paid orders produce:
 
 ```text
     city  orders  revenue_usd
@@ -112,6 +102,14 @@ Shanghai       2          140
 Shenzhen       1           50
 ```
 
-The cancelled order is excluded. `saved_orders` comes from a fresh Iceberg table scan, so this query uses the data written to the container.
+The script creates `pandas_demo.orders`; running it again with the same container will find that table already exists. To repeat the example, use a new table name or a new disposable container.
 
-For container configuration and other client operations, see the [quick start](https://crowdb.dev/docs/quickstart/) and [Iceberg manual](https://crowdb.dev/docs/manual/iceberg/).
+When finished, remove the disposable container and credentials file:
+
+```sh
+docker stop --time 120 crowdb-iceberg
+docker rm crowdb-iceberg
+rm -f ./crowdb-iceberg.env
+```
+
+For a persistent volume or other client operations, see the [quick start](https://crowdb.dev/docs/quickstart/) and [Iceberg manual](https://crowdb.dev/docs/manual/iceberg/).

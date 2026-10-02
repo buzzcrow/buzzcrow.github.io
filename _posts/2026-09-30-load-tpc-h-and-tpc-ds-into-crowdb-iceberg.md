@@ -1,29 +1,39 @@
 ---
-title: "Run TPC-H and TPC-DS on the CROWDB Iceberg container"
-subtitle: "Start the container, load data, and check its Iceberg tables with DuckDB."
+title: "Load TPC-H and TPC-DS tables into CROWDB Iceberg"
+subtitle: "Check 32 imported tables, then read TPC-H and TPC-DS data with DuckDB."
 date: 2026-09-30 23:20:00 +0800
-last_modified_at: 2026-10-01 23:25:00 +0800
+last_modified_at: 2026-10-02 10:00:00 +0800
 category: Guides
 tags: [Iceberg, TPC-H, TPC-DS, DuckDB, Docker]
-description: "Run DuckDB's TPC-H and TPC-DS queries against tables served by the published CROWDB Iceberg container."
-excerpt: "The CROWDB Iceberg container served all 22 TPC-H and 99 TPC-DS queries at SF 0.01."
+description: "Load TPC-H and TPC-DS data into the CROWDB Iceberg container, check table counts, and read both from DuckDB."
+excerpt: "Load 32 small Iceberg tables, check their row counts, and read both datasets with DuckDB."
 image: /assets/og-iceberg.png
 ---
 
-The [CROWDB Iceberg container](https://hub.docker.com/r/crowdb/crowdb-iceberg/tags) serves an Iceberg REST catalog and the files behind its tables. I loaded TPC data into it, then ran DuckDB queries through that interface. These commands use a Linux amd64 host with Docker, Python 3.10–3.12, and the DuckDB CLI. Use disposable data for this evaluation image.
+The [CROWDB Iceberg container](https://hub.docker.com/r/crowdb/crowdb-iceberg/tags) serves a catalog and the files behind its tables. This guide loads small TPC-H and TPC-DS datasets, checks the import reports, and reads a table with DuckDB.
 
-## Start CROWDB Iceberg
+Use disposable data on a Linux amd64 host with Docker, Python 3.10–3.12, the DuckDB CLI, and a free local port 80. The loader may download a TPC-H generator on its first run; DuckDB may download extensions.
 
-```bash
+## 1. Start CROWDB Iceberg
+
+```sh
 docker run -d --name crowdb-iceberg -p 127.0.0.1:80:80 crowdb/crowdb-iceberg:latest
+docker exec crowdb-iceberg crowdb-monitor readiness && echo ready
+```
+
+Rerun the readiness command until it prints `ready`. Save the generated credentials in a private file and load them into your shell:
+
+```sh
+umask 077
+docker exec crowdb-iceberg crowdb-monitor credentials show --format env > ./crowdb-iceberg.env
 set -a
-source <(docker exec crowdb-iceberg crowdb-monitor credentials show --format env)
+. ./crowdb-iceberg.env
 set +a
 ```
 
-The monitor supplies `ICEBERG_URI` and `ICEBERG_TOKEN` to the current Bash session.
+The loader and DuckDB use `ICEBERG_URI` and `ICEBERG_TOKEN` from this container. Keep the file private.
 
-## Load TPC-H
+## 2. Load the data
 
 ```sh
 python3 -m venv .venv
@@ -31,11 +41,40 @@ python3 -m venv .venv
 python -m pip install crowdb-tpc-loader
 crowdb-tpc-loader load --benchmark tpch --sf 0.01 \
   --namespace tpch_demo --report-file ./tpch-demo.json
+crowdb-tpc-loader load --benchmark tpcds --sf 0.01 \
+  --namespace tpcds_demo --upload-workers 4 --report-file ./tpcds-demo.json
 ```
 
-The [crowdb-tpc-loader](https://github.com/buzzcrow/crowdb-tpc-loader) creates eight Iceberg tables with 86,805 rows. It is a data import tool for this container test; the [loader guide](https://crowdb.dev/docs/tpc-loader/) covers its options.
+The [crowdb-tpc-loader](https://github.com/buzzcrow/crowdb-tpc-loader) loads each dataset into its own namespace. At scale factor 0.01, TPC-H creates eight tables with 86,805 rows; TPC-DS creates 24 tables with 277,976 rows. Check your own reports:
 
-## Query with DuckDB
+```sh
+python - <<'PY'
+import json
+
+for name in ("tpch", "tpcds"):
+    with open(f"{name}-demo.json", encoding="utf-8") as file:
+        report = json.load(file)
+    summary = report["summary"]
+    print(f"{name}: {len(summary['succeeded'])} tables, {summary['generated_rows']:,} rows; status={report['status']}")
+    if name == "tpcds":
+        print(f"date_dim: {report['tables']['date_dim']['row_count']:,} rows")
+PY
+```
+
+The first two lines for the completed imports used in this guide were:
+
+```text
+tpch: 8 tables, 86,805 rows; status=succeeded
+tpcds: 24 tables, 277,976 rows; status=succeeded
+```
+
+The third line prints the `date_dim` row count to compare with the DuckDB query below.
+
+If an import fails, keep its JSON report and follow the [loader recovery guide](https://github.com/buzzcrow/crowdb-tpc-loader/blob/main/docs/RECOVERY.md) before retrying. A new namespace avoids colliding with tables from an earlier run.
+
+## 3. Query a table with DuckDB
+
+The empty warehouse selector in `ATTACH ''` is required for this CROWDB profile. Run the DuckDB CLI in the same shell where you loaded the credentials:
 
 ```sh
 duckdb <<SQL
@@ -46,41 +85,18 @@ LOAD httpfs;
 CREATE SECRET crowdb_catalog (TYPE ICEBERG, TOKEN '$ICEBERG_TOKEN');
 ATTACH '' AS crowdb (TYPE ICEBERG, SECRET crowdb_catalog, ENDPOINT '$ICEBERG_URI');
 SELECT r_regionkey, r_name FROM crowdb.tpch_demo.region WHERE r_regionkey = 1;
-SELECT l_returnflag, l_linestatus,
-       sum(l_quantity) AS sum_qty,
-       sum(l_extendedprice) AS sum_base_price,
-       sum(l_extendedprice * (1 - l_discount)) AS sum_disc_price,
-       sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) AS sum_charge,
-       avg(l_quantity) AS avg_qty,
-       avg(l_extendedprice) AS avg_price,
-       avg(l_discount) AS avg_disc,
-       count(*) AS count_order
-FROM crowdb.tpch_demo.lineitem
-WHERE l_shipdate <= DATE '1998-09-02'
-GROUP BY l_returnflag, l_linestatus
-ORDER BY l_returnflag, l_linestatus;
+SELECT count(*) AS date_dim_rows FROM crowdb.tpcds_demo.date_dim;
 SQL
 ```
 
-The first query returned `(1, AMERICA)`. TPC-H Q1 returned these `count_order` values:
+For the TPC-H data above, the first query returns `(1, AMERICA)`. The second count should match `date_dim` in your TPC-DS report. Both reads go through CROWDB's Iceberg catalog and file service.
 
-```text
-returnflag  linestatus  count_order
-A           F           14876
-N           F             348
-N           O           29181
-R           F           14902
-```
+I also ran all 22 TPC-H and 99 TPC-DS queries with DuckDB 1.5.6 against the published container at scale factor 0.01. Their results matched DuckDB reading the same local Parquet files: 22/22 and 99/99. Those are separate [recorded development checks](https://github.com/buzzcrow/crowdb-tpc-loader/blob/main/docs/TEST_REPORT.md), not the queries run by the commands above or timed TPC benchmark scores. The `latest` image may change, so keep its digest when recording new results.
 
-I ran all 22 [DuckDB TPC-H queries](https://github.com/duckdb/duckdb/tree/main/extension/tpch/dbgen/queries) against the container's Iceberg tables. Every result matched DuckDB reading the same local Parquet files: **22/22**.
-
-## Also try TPC-DS
+When finished, remove the disposable container and credentials file:
 
 ```sh
-crowdb-tpc-loader load --benchmark tpcds --sf 0.01 \
-  --namespace tpcds_demo --upload-workers 4 --report-file ./tpcds-demo.json
+docker stop --time 120 crowdb-iceberg
+docker rm crowdb-iceberg
+rm -f ./crowdb-iceberg.env
 ```
-
-The container served 24 TPC-DS tables with 277,976 rows. DuckDB ran all 99 [TPC-DS queries](https://github.com/duckdb/duckdb/tree/main/extension/tpcds/dsdgen/queries) against them; every result matched the same local Parquet data: **99/99**. These SF 0.01 runs are development checks of the container's Iceberg read path and query results, not TPC benchmark scores.
-
-When finished, run `docker rm -f crowdb-iceberg` to remove the disposable container.

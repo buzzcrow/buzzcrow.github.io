@@ -832,9 +832,6 @@ p {
   line-height:1.5
 }
 .writing-grid {
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 246px;
-  gap:54px;
   padding-bottom:67px
 }
 .post-row {
@@ -857,27 +854,6 @@ p {
 }
 .post-row:hover h3 {
   color:var(--accent)
-}
-.journal-sidebar {
-  border-left:1px solid var(--line);
-  padding:26px 0 0 27px
-}
-.journal-sidebar h3 {
-  font-size:16px;
-  margin:12px 0
-}
-.journal-sidebar p {
-  font-size:16px;
-  line-height:1.85
-}
-.journal-sidebar .text-link {
-  font-size:16px;
-  margin-top:16px
-}
-.sidebar-section+.sidebar-section {
-  margin-top:30px;
-  padding-top:25px;
-  border-top:1px solid var(--line)
 }
 .no-results {
   padding:35px 0;
@@ -1800,10 +1776,6 @@ p {
   .journal-feature h2 {
     font-size:30px
   }
-  .writing-grid {
-    grid-template-columns:1fr 220px;
-    gap:30px
-  }
   .post-top,.article-layout {
     max-width:900px
   }
@@ -1962,13 +1934,6 @@ p {
   }
   .journal-feature .excerpt {
     font-size:17px
-  }
-  .writing-grid {
-    grid-template-columns:minmax(0,1fr) 190px;
-    gap:25px
-  }
-  .journal-sidebar {
-    padding-left:20px
   }
   .post-row {
     display:block
@@ -2376,8 +2341,6 @@ p {
     min-height:39px
   }
   .writing-grid {
-    grid-template-columns:1fr;
-    gap:29px;
     padding-bottom:36px
   }
   .post-row {
@@ -2393,23 +2356,6 @@ p {
   .post-row .meta {
     gap:7px;
     font-size:9px
-  }
-  .journal-sidebar {
-    border-left:0;
-    border-top:1px solid var(--line);
-    padding:24px 0 0;
-    display:grid;
-    grid-template-columns:1fr;
-    gap:24px
-  }
-  .sidebar-section+.sidebar-section {
-    margin:0;
-    border-top:0;
-    padding:0
-  }
-  .sidebar-section.rss-section {
-    padding-top:20px;
-    border-top:1px solid var(--line)
   }
   .journal-bottom {
     padding:27px 0
@@ -2767,7 +2713,6 @@ p {
   body.journal .author-small { font-size:14px }
   body.journal .filter-button { font-size:14px }
   body.journal .search-input { font-size:16px }
-  body.journal .journal-sidebar h3 { font-size:19px }
   body.journal .toc nav,body.journal .toc-mobile nav { font-size:13px }
   body.journal .reading-controls label { font-size:12px }
   body.journal .font-controls button { font-size:13px }
