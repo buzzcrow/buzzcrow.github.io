@@ -12,12 +12,12 @@ image: /assets/og-iceberg.png
 
 The [CROWDB Iceberg container](https://hub.docker.com/r/crowdb/crowdb-iceberg/tags) serves a catalog and the files behind its tables. This guide loads small TPC-H and TPC-DS datasets, checks the import reports, and reads a table with DuckDB.
 
-Use disposable data on a Linux amd64 host with Docker, Python 3.10–3.12, the DuckDB CLI, and a free local port 80. The loader may download a TPC-H generator on its first run; DuckDB may download extensions.
+Use disposable data on a Linux amd64 host with Docker, Python 3.10–3.12, the DuckDB CLI, and a free local port 9092. The loader may download a TPC-H generator on its first run; DuckDB may download extensions.
 
 ## 1. Start CROWDB Iceberg
 
 ```sh
-docker run -d --name crowdb-iceberg -p 127.0.0.1:80:80 crowdb/crowdb-iceberg:latest
+docker run -d --name crowdb-iceberg -p 127.0.0.1:9092:9092 crowdb/crowdb-iceberg:latest
 docker exec crowdb-iceberg crowdb-monitor readiness && echo ready
 ```
 

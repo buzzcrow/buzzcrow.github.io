@@ -14,12 +14,12 @@ figure_caption: "Write an Iceberg table and read it into pandas."
 ---
 CROWDB's `crowdb-iceberg` container runs an Iceberg catalog and table storage together. You will write six orders to a table, read them back, and total the paid orders by city.
 
-Use a Linux amd64 host with Docker and Python 3.10–3.12. Use disposable data with this evaluation image, and make sure local port 80 is free.
+Use a Linux amd64 host with Docker and Python 3.10–3.12. Use disposable data with this evaluation image, and make sure local port 9092 is free.
 
 ## 1. Start the container
 
 ```sh
-docker run -d --name crowdb-iceberg -p 127.0.0.1:80:80 crowdb/crowdb-iceberg:latest
+docker run -d --name crowdb-iceberg -p 127.0.0.1:9092:9092 crowdb/crowdb-iceberg:latest
 docker exec crowdb-iceberg crowdb-monitor readiness && echo ready
 ```
 

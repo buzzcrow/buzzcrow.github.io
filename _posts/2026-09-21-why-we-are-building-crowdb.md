@@ -57,10 +57,10 @@ Underneath, `crowdb-kv` replicates the small pieces of state those layers need t
 <p>S3 and native Iceberg have working implementations. Dataset and direct GPU delivery are still in design. The single-node container is for disposable data: it has no host fault tolerance, production support, or supported on-disk upgrade path.</p>
 </div>
 
-To check the current Iceberg path yourself, start the disposable container on a Linux amd64 host with Docker and a free local port 80:
+To check the current Iceberg path yourself, start the disposable container on a Linux amd64 host with Docker and a free local port 9092:
 
 ```sh
-docker run -d --name crowdb-iceberg -p 127.0.0.1:80:80 crowdb/crowdb-iceberg:latest
+docker run -d --name crowdb-iceberg -p 127.0.0.1:9092:9092 crowdb/crowdb-iceberg:latest
 docker exec crowdb-iceberg crowdb-monitor readiness && echo ready
 ```
 
