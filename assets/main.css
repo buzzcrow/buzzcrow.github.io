@@ -752,15 +752,6 @@ p {
   align-items:flex-start;
   justify-content:center
 }
-.featured-brand {
-  display:block;
-  width:min(280px,100%);
-  margin-bottom:28px
-}
-.featured-brand img {
-  width:100%;
-  height:auto
-}
 .journal-feature h2 {
   font-size:34px;
   margin:20px 0 18px;
@@ -2779,4 +2770,24 @@ p {
   .brand-mark [fill="#242b28"] { fill:var(--ink) }
   .brand-mark [fill="#faf9f6"] { fill:var(--paper) }
   .brand-mark [fill="#b74324"] { fill:#e88a64 }
+}
+
+/* Blog landing page: brand identity followed by the featured story. */
+.journal-home-hero { padding-block:64px 42px }
+.journal-home-hero h1 { margin:0; width:min(420px,100%); line-height:0 }
+.journal-home-hero img { display:block; width:100%; height:auto }
+.journal-home-hero p { margin:22px 0 0; color:var(--muted); font-size:18px }
+.journal-home .journal-feature { margin:0 0 36px; padding:34px 0 40px; border:0; border-block:1px solid var(--line); border-radius:0; background:transparent; overflow:visible }
+.journal-home .journal-feature-text { padding:0; display:block }
+.journal-home .journal-feature h2 { font-size:clamp(34px,4vw,52px); letter-spacing:-.045em; line-height:1.12; max-width:960px; margin:18px 0 }
+.journal-home .journal-feature .excerpt { max-width:760px; font-size:18px; line-height:1.7 }
+.journal-home .journal-feature .author-small { display:inline-flex; margin:22px 32px 0 0; vertical-align:middle }
+.journal-home .journal-feature .text-link { display:inline-flex; margin-top:22px; vertical-align:middle }
+.journal-home .avatar { color:var(--muted); border-color:var(--line) }
+@media(max-width:700px) {
+  .journal-home-hero { padding-block:44px 32px }
+  .journal-home-hero h1 { width:min(360px,100%) }
+  .journal-home-hero p { font-size:16px }
+  .journal-home .journal-feature { padding-block:28px 32px }
+  .journal-home .journal-feature .excerpt { font-size:17px }
 }
