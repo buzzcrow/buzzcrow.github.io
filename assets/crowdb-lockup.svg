@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 112" role="img" aria-labelledby="title desc"><style>@media(prefers-color-scheme:dark){[fill="#242b28"]{fill:#e5eaf3}[fill="#faf9f6"]{fill:#0b0f17}[fill="#e88a64"]{fill:#e88a64}}</style>
+  <title id="title">CROWDB</title>
+  <desc id="desc">Angular crow symbol and CROWDB wordmark.</desc>
+  <path fill="#242b28" d="M12 84 23 54 19 36 45 11 68 24 77 44 105 51 80 61 69 83 48 104 40 77 12 85Z"/>
+  <path fill="#faf9f6" d="m27 65 19-36 9 41-28-5Z"/>
+  <path fill="#e88a64" d="m49 24 19 2 9 18-18-6-10-14Z"/>
+  <circle cx="69" cy="40" r="2.6" fill="#faf9f6"/>
+  <text x="129" y="81" fill="#242b28" font-family="Arial,Helvetica,sans-serif" font-size="79" font-weight="700" letter-spacing="-4.5">CROW<tspan fill="#e88a64">DB</tspan></text>
+</svg>
