@@ -2,15 +2,15 @@
 title: "Load TPC-H and TPC-DS tables into CROWDB Iceberg"
 subtitle: "Check 32 imported tables, then read TPC-H and TPC-DS data with DuckDB."
 date: 2026-09-30 23:20:00 +0800
-last_modified_at: 2026-10-02 10:00:00 +0800
+last_modified_at: 2026-10-06 16:30:00 +0800
 category: Guides
 tags: [Iceberg, TPC-H, TPC-DS, DuckDB, Docker]
 description: "Load TPC-H and TPC-DS data into the CROWDB Iceberg container, check table counts, and read both from DuckDB."
-excerpt: "Load 32 small Iceberg tables, check their row counts, and read both datasets with DuckDB."
+excerpt: "Load 32 Iceberg tables at SF1, check their row counts, and read both datasets with DuckDB."
 image: /assets/og-iceberg.png
 ---
 
-The [CROWDB Iceberg container](https://hub.docker.com/r/crowdb/crowdb-iceberg/tags) serves a catalog and the files behind its tables. This guide loads small TPC-H and TPC-DS datasets, checks the import reports, and reads a table with DuckDB.
+The [CROWDB Iceberg container](https://hub.docker.com/r/crowdb/crowdb-iceberg/tags) serves a catalog and the files behind its tables. This guide loads TPC-H and TPC-DS datasets at scale factor 1 (SF1), checks the import reports, and reads a table with DuckDB.
 
 Use disposable data on a Linux amd64 host with Docker, Python 3.10–3.12, the DuckDB CLI, and a free local port 9092. The loader may download a TPC-H generator on its first run; DuckDB may download extensions.
 
@@ -39,13 +39,13 @@ The loader and DuckDB use `ICEBERG_URI` and `ICEBERG_TOKEN` from this container.
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install crowdb-tpc-loader
-crowdb-tpc-loader load --benchmark tpch --sf 0.01 \
+crowdb-tpc-loader load --benchmark tpch --sf 1 \
   --namespace tpch_demo --report-file ./tpch-demo.json
-crowdb-tpc-loader load --benchmark tpcds --sf 0.01 \
+crowdb-tpc-loader load --benchmark tpcds --sf 1 \
   --namespace tpcds_demo --upload-workers 4 --report-file ./tpcds-demo.json
 ```
 
-The [crowdb-tpc-loader](https://github.com/buzzcrow/crowdb-tpc-loader) loads each dataset into its own namespace. At scale factor 0.01, TPC-H creates eight tables with 86,805 rows; TPC-DS creates 24 tables with 277,976 rows. Check your own reports:
+The [crowdb-tpc-loader](https://github.com/buzzcrow/crowdb-tpc-loader) loads each dataset into its own namespace. At SF1, TPC-H creates eight tables and TPC-DS creates 24 tables. Check the completed table counts, generated row totals, and status in your own reports:
 
 ```sh
 python - <<'PY'
@@ -61,16 +61,18 @@ for name in ("tpch", "tpcds"):
 PY
 ```
 
-The first two lines for the completed imports used in this guide were:
-
-```text
-tpch: 8 tables, 86,805 rows; status=succeeded
-tpcds: 24 tables, 277,976 rows; status=succeeded
-```
-
-The third line prints the `date_dim` row count to compare with the DuckDB query below.
+Check that the reports show eight successful TPC-H tables and 24 successful TPC-DS tables, both with `status=succeeded`. The script also prints the generated row totals and the `date_dim` row count to compare with the DuckDB query below.
 
 If an import fails, keep its JSON report and follow the [loader recovery guide](https://github.com/buzzcrow/crowdb-tpc-loader/blob/main/docs/RECOVERY.md) before retrying. A new namespace avoids colliding with tables from an earlier run.
+
+### Inspect the table files
+
+The development console’s Iceberg tab shows the table tree alongside Parquet file details. The screenshot below follows a `lineitem` file down to its row groups and column metadata.
+
+<figure class="console-shot">
+  <a href="{{ '/assets/crowdb-iceberg.png' | relative_url }}" target="_blank" rel="noopener" aria-label="Open inside an iceberg file screenshot at full size"><img src="{{ '/assets/crowdb-iceberg.png' | relative_url }}" alt="From a table snapshot and manifest to a Parquet file: byte layout, row groups, and column metadata." width="1621" height="868" loading="lazy" decoding="async"></a>
+  <figcaption>Iceberg file inspection in the development console, October 6, 2026. The TPC-H SF1 lineitem file contains 6,001,215 rows. The screenshot uses a run-specific namespace; the commands above use tpch_demo. <a href="{{ '/assets/crowdb-iceberg.png' | relative_url }}" target="_blank" rel="noopener">View full-size screenshot ↗</a></figcaption>
+</figure>
 
 ## 3. Query a table with DuckDB
 
@@ -91,7 +93,7 @@ SQL
 
 For the TPC-H data above, the first query returns `(1, AMERICA)`. The second count should match `date_dim` in your TPC-DS report. Both reads go through CROWDB's Iceberg catalog and file service.
 
-I also ran all 22 TPC-H and 99 TPC-DS queries with DuckDB 1.5.6 against the published container at scale factor 0.01. Their results matched DuckDB reading the same local Parquet files: 22/22 and 99/99. Those are separate [recorded development checks](https://github.com/buzzcrow/crowdb-tpc-loader/blob/main/docs/TEST_REPORT.md), not the queries run by the commands above or timed TPC benchmark scores. The `latest` image may change, so keep its digest when recording new results.
+The [recorded SF1 development checks](https://github.com/buzzcrow/crowdb-tpc-loader/blob/main/docs/TEST_REPORT.md) for loader 0.1.1 committed all 32 tables against a fresh local single-node image. Verification covered remote MD5 comparison, full-row Parquet decoding, Iceberg sample scans, and DuckDB row-count queries for every table. These checks validate the import and read path; they are not timed TPC benchmark results. The `latest` image may change, so keep its digest when recording new results.
 
 When finished, remove the disposable container and credentials file:
 
