@@ -10,18 +10,20 @@ excerpt: "Load 32 Iceberg tables at SF1, check their row counts, and read both d
 image: /assets/og-iceberg.png
 ---
 
-The [CROWDB Iceberg container](https://hub.docker.com/r/crowdb/crowdb-iceberg/tags) serves a catalog and the files behind its tables. This guide loads TPC-H and TPC-DS datasets at scale factor 1 (SF1), checks the import reports, and reads a table with DuckDB.
+The [CROWDB Iceberg latest container](https://hub.docker.com/r/crowdb/crowdb-iceberg/tags) serves a catalog, the files behind its tables, and a local web Console. This guide loads TPC-H and TPC-DS datasets at scale factor 1 (SF1), checks the import reports, and reads a table with DuckDB.
 
 Use disposable data on a Linux amd64 host with Docker, Python 3.10–3.12, the DuckDB CLI, and a free local port 9092. The loader may download a TPC-H generator on its first run; DuckDB may download extensions.
 
 ## 1. Start CROWDB Iceberg
 
 ```sh
-docker run -d --name crowdb-iceberg -p 127.0.0.1:9092:9092 crowdb/crowdb-iceberg:latest
-docker exec crowdb-iceberg crowdb-monitor readiness && echo ready
+docker run -d --name crowdb-iceberg \
+  -p 127.0.0.1:9090:9090 \
+  -p 127.0.0.1:9092:9092 \
+  crowdb/crowdb-iceberg:latest
 ```
 
-Rerun the readiness command until it prints `ready`. Save the generated credentials in a private file and load them into your shell:
+Open [http://127.0.0.1:9090/](http://127.0.0.1:9090/) in a browser and select **Iceberg**. Leave the Console open while the loader runs; it will show the imported namespaces, tables, snapshots, and Parquet files. Save the generated credentials in a private file and load them into your shell:
 
 ```sh
 umask 077
@@ -67,11 +69,11 @@ If an import fails, keep its JSON report and follow the [loader recovery guide](
 
 ### Inspect the table files
 
-The development console’s Iceberg tab shows the table tree alongside Parquet file details. The screenshot below follows a `lineitem` file down to its row groups and column metadata.
+The development container’s Iceberg tab shows the table tree, snapshot, manifest, and the selected Parquet file. The screenshot below is stopped on the Parquet file page so its row groups, byte layout, and column metadata are visible; the Healthy indicator remains visible in the Console header.
 
 <figure class="console-shot">
-  <a href="{{ '/assets/crowdb-iceberg.png' | relative_url }}" target="_blank" rel="noopener" aria-label="Open inside an iceberg file screenshot at full size"><img src="{{ '/assets/crowdb-iceberg.png' | relative_url }}" alt="From a table snapshot and manifest to a Parquet file: byte layout, row groups, and column metadata." width="1621" height="868" loading="lazy" decoding="async"></a>
-  <figcaption>Iceberg file inspection in the development console, October 6, 2026. The TPC-H SF1 lineitem file contains 6,001,215 rows. The screenshot uses a run-specific namespace; the commands above use tpch_demo. <a href="{{ '/assets/crowdb-iceberg.png' | relative_url }}" target="_blank" rel="noopener">View full-size screenshot ↗</a></figcaption>
+  <a href="{{ '/assets/crowdb-iceberg-latest-manifest.png' | relative_url }}" target="_blank" rel="noopener" aria-label="Open the Iceberg manifest and file screenshot at full size"><img src="{{ '/assets/crowdb-iceberg-latest-manifest.png' | relative_url }}" alt="From a table snapshot and manifest to a Parquet file: byte layout, row groups, and column metadata." width="1621" height="868" loading="lazy" decoding="async"></a>
+  <figcaption>Iceberg file inspection in a local development-container run. The TPC-H lineitem file contains 6,001,215 rows; the view includes the Parquet file, byte layout, row groups, and column metadata. The screenshot uses a run-specific namespace; the commands above use `tpch_demo`. <a href="{{ '/assets/crowdb-iceberg-latest-manifest.png' | relative_url }}" target="_blank" rel="noopener">View full-size screenshot ↗</a></figcaption>
 </figure>
 
 ## 3. Query a table with DuckDB

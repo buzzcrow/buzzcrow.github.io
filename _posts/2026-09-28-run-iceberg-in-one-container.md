@@ -12,18 +12,20 @@ image: /assets/og-iceberg.png
 figure_title: "Catalog + storage."
 figure_caption: "Write an Iceberg table and read it into pandas."
 ---
-CROWDB's `crowdb-iceberg` container runs an Iceberg catalog and table storage together. You will write six orders to a table, read them back, and total the paid orders by city.
+CROWDB's `crowdb-iceberg:latest` container runs an Iceberg catalog, table storage, and a local web Console together. You will write six orders to a table, read them back, and total the paid orders by city.
 
 Use a Linux amd64 host with Docker and Python 3.10–3.12. Use disposable data with this evaluation image, and make sure local port 9092 is free.
 
 ## 1. Start the container
 
 ```sh
-docker run -d --name crowdb-iceberg -p 127.0.0.1:9092:9092 crowdb/crowdb-iceberg:latest
-docker exec crowdb-iceberg crowdb-monitor readiness && echo ready
+docker run -d --name crowdb-iceberg \
+  -p 127.0.0.1:9090:9090 \
+  -p 127.0.0.1:9092:9092 \
+  crowdb/crowdb-iceberg:latest
 ```
 
-Rerun the second command until it prints `ready`. The port mapping keeps the catalog and file service on your machine.
+The `9092` mapping keeps the catalog and file service on your machine. The `9090` mapping serves the local Console. Open [http://127.0.0.1:9090/](http://127.0.0.1:9090/) in a browser and select **Iceberg**. The table tree is empty until the script below creates `pandas_demo.orders`.
 
 ## 2. Get credentials and install the client
 
@@ -92,6 +94,18 @@ Run it once:
 ```sh
 python orders.py
 ```
+
+Refresh the Console and select **Iceberg → pandas_demo → orders** to inspect the table, its snapshot, and the Parquet file written by the script. The Console is an inspection surface for this local container; the client and query examples above still use the Iceberg endpoint on `9092`.
+
+<figure class="console-shot">
+  <a href="{{ '/assets/crowdb-cluster-latest.png' | relative_url }}" target="_blank" rel="noopener" aria-label="Open the CROWDB cluster screenshot at full size"><img src="{{ '/assets/crowdb-cluster-latest.png' | relative_url }}" alt="CROWDB Console cluster view showing Healthy service status." width="1621" height="868" loading="lazy" decoding="async"></a>
+  <figcaption>The same local container also exposes the Cluster view, where the service health is visible. <a href="{{ '/assets/crowdb-cluster-latest.png' | relative_url }}" target="_blank" rel="noopener">View full-size screenshot ↗</a></figcaption>
+</figure>
+
+<figure class="console-shot">
+  <a href="{{ '/assets/crowdb-iceberg-orders.png' | relative_url }}" target="_blank" rel="noopener" aria-label="Open a CROWDB Iceberg Console screenshot at full size"><img src="{{ '/assets/crowdb-iceberg-orders.png' | relative_url }}" alt="CROWDB Console showing the real pandas_demo.orders Parquet file from crowdb-iceberg:latest, with Healthy visible." width="1621" height="868" loading="lazy" decoding="async"></a>
+  <figcaption>The Iceberg view follows the real `pandas_demo.orders` table from its snapshot into the manifest and Parquet file. The Console header shows Healthy; the exact generated file name varies by run. <a href="{{ '/assets/crowdb-iceberg-orders.png' | relative_url }}" target="_blank" rel="noopener">View full-size screenshot ↗</a></figcaption>
+</figure>
 
 The fresh Iceberg scan reads the rows saved in the container. One order is cancelled, so the five paid orders produce:
 
