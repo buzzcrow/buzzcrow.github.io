@@ -34,18 +34,7 @@ body {
   line-height:1.65;
   -webkit-font-smoothing:antialiased
 }
-.product-site #main {
-  position:relative;
-  isolation:isolate
-}
-.product-site #main::before {
-  content:"";
-  position:absolute;
-  z-index:-1;
-  inset:0;
-  pointer-events:none;
-  background:radial-gradient(ellipse at 82% 8%,#dbeafe 0,transparent 45%),radial-gradient(ellipse at 12% 28%,#e0f2fe 0,transparent 48%),linear-gradient(180deg,#f8fafc 0%,#eef3f9 100%)
-}
+.product-site { background:radial-gradient(ellipse at 82% 8%,#dbeafe 0,transparent 45%),radial-gradient(ellipse at 12% 28%,#e0f2fe 0,transparent 48%),linear-gradient(180deg,#f8fafc 0%,#eef3f9 100%),repeating-linear-gradient(90deg,transparent 0,transparent 95px,#2563eb0b 95px,#2563eb0b 96px),repeating-linear-gradient(0deg,transparent 0,transparent 95px,#2563eb0b 95px,#2563eb0b 96px); }
 body,button,input {
   font-family:var(--sans)
 }
