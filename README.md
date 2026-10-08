@@ -9,19 +9,23 @@ editorial and design rules live in [AGENTS.md](AGENTS.md).
 
 ## Local development
 
-Use Ruby 3.3 and Bundler. From this directory:
+Use the checked-in Pixi environment. It installs Ruby 3.3 and keeps Bundler gems
+under `.pixi/`, isolated from the system Ruby. From this directory:
 
 ```sh
-bundle install
-bundle exec jekyll serve
+pixi install
+pixi run serve
 # Open http://localhost:4000
 ```
 
 Production build:
 
 ```sh
-JEKYLL_ENV=production bundle exec jekyll build
+pixi run build
 ```
+
+The first `pixi run` installs the Gemfile dependencies into `.pixi/bundle`.
+
 
 The public URL is a user-site root, with `baseurl: ""`. The delivered navigation
 assumes that root. Moving to a repository subpath requires auditing root-relative
@@ -47,8 +51,9 @@ or unrelated articles/assets. Check any existing Gemfile.lock against this Gemfi
 The delivery contains a separately generated `blog-static/` snapshot for instant
 preview and optional deployment. It is **not** claimed to be a Jekyll build output.
 Static routes, responsive layouts and interactions were checked in Chromium.
-Ruby/Jekyll dependencies could not be installed in the delivery environment, so
-run the real Jekyll production build locally or in Actions before publishing.
+The local Pixi task installs the Ruby/Jekyll dependencies into `.pixi/` and runs the
+same production build used for validation. GitHub Actions continues to use Ruby and
+Bundler through `ruby/setup-ruby`.
 The complete package includes a static Pages workflow alternative that does not
 require Ruby. Do not edit a snapshot and expect it to update the Markdown source.
 

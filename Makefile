@@ -1,8 +1,13 @@
 build:
-	bundle exec jekyll build
+	pixi run build
 
 run:
-	bundle exec jekyll serve
+	pixi run serve
+
+serve: run
 
 test:
-	JEKYLL_ENV=production bundle exec jekyll build
+	pixi run test
+
+install:
+	pixi run bundle-install
